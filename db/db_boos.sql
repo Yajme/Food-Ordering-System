@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2023 at 01:32 PM
+-- Generation Time: Dec 02, 2023 at 02:01 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -143,8 +143,8 @@ CREATE TABLE `tbl_order_details` (
   `transaction_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
   `mop_id` int(11) NOT NULL,
-  `total_amount` decimal(10,0) NOT NULL,
-  `balance` decimal(10,0) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `balance` decimal(10,2) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `modified_at` datetime NOT NULL DEFAULT current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
@@ -161,7 +161,7 @@ CREATE TABLE `tbl_order_records` (
   `record_id` int(11) NOT NULL,
   `transaction_id` int(11) NOT NULL,
   `remarks` varchar(255) DEFAULT NULL,
-  `amount` decimal(10,0) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -225,7 +225,7 @@ CREATE TABLE `tbl_product` (
   `category_id` int(11) NOT NULL,
   `product_name` varchar(50) NOT NULL,
   `product_description` varchar(50) DEFAULT NULL,
-  `price` decimal(10,0) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
   `image_path` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `modified_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -237,9 +237,9 @@ CREATE TABLE `tbl_product` (
 --
 
 INSERT INTO `tbl_product` (`product_id`, `category_id`, `product_name`, `product_description`, `price`, `image_path`, `created_at`, `modified_at`, `deleted_at`) VALUES
-(1, 3, 'HugSiLog', 'Hungarian Hotdog, Sinangag, Itlog', 110, NULL, '2023-12-02 20:18:59', '2023-12-02 20:18:59', NULL),
-(2, 4, 'Chicken Teriyaki', 'Chicken Teriyaki', 175, NULL, '2023-12-02 20:19:57', '2023-12-02 20:19:57', NULL),
-(3, 1, 'Pork Tonkatsu', 'Pork Tonkatsu', 180, NULL, '2023-12-02 20:20:40', '2023-12-02 20:20:40', NULL);
+(1, 3, 'HugSiLog', 'Hungarian Hotdog, Sinangag, Itlog', 110.00, NULL, '2023-12-02 20:18:59', '2023-12-02 20:18:59', NULL),
+(2, 4, 'Chicken Teriyaki', 'Chicken Teriyaki', 175.00, NULL, '2023-12-02 20:19:57', '2023-12-02 20:19:57', NULL),
+(3, 1, 'Pork Tonkatsu', 'Pork Tonkatsu', 180.00, NULL, '2023-12-02 20:20:40', '2023-12-02 20:20:40', NULL);
 
 -- --------------------------------------------------------
 
