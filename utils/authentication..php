@@ -9,7 +9,7 @@ Class authentication{
         $this->basePassword = $BasePassword;
     }
 
-    function AuthenticateLogin(){
+    function Authenticate(){
         return ($this->hashedPassword == $this->basePassword);
     }
 }
