@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2023 at 02:01 PM
+-- Generation Time: Dec 03, 2023 at 03:08 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -83,6 +83,13 @@ CREATE TABLE `tbl_customer` (
   `modified_at` datetime NOT NULL DEFAULT current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_customer`
+--
+
+INSERT INTO `tbl_customer` (`customer_id`, `user_id`, `firstname`, `lastname`, `address`, `phone`, `created_at`, `modified_at`, `deleted_at`) VALUES
+(1, 2, 'Emjay', 'Rongavilla', 'San Antonio', '0999328736', '2023-12-03 20:46:37', '2023-12-03 20:46:37', NULL);
 
 -- --------------------------------------------------------
 
@@ -288,6 +295,59 @@ INSERT INTO `tbl_user_role` (`role_id`, `role_name`) VALUES
 (1, 'admin'),
 (2, 'user');
 
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_availableproducts`
+-- (See below for the actual view)
+--
+DROP VIEW IF EXISTS `view_availableproducts`;
+CREATE TABLE `view_availableproducts` (
+`ID` int(11)
+,`Product Name` varchar(50)
+,`Description` varchar(50)
+,`Category` varchar(50)
+,`Price` decimal(10,2)
+,`image_path` varchar(255)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_user_customer`
+-- (See below for the actual view)
+--
+DROP VIEW IF EXISTS `view_user_customer`;
+CREATE TABLE `view_user_customer` (
+`user_id` int(11)
+,`username` varchar(50)
+,`email` varchar(255)
+,`password` varchar(255)
+,`salt` varchar(10)
+,`role_name` varchar(50)
+,`CustomerName` varchar(101)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_availableproducts`
+--
+DROP TABLE IF EXISTS `view_availableproducts`;
+
+DROP VIEW IF EXISTS `view_availableproducts`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_availableproducts`  AS SELECT `pdt`.`product_id` AS `ID`, `pdt`.`product_name` AS `Product Name`, `pdt`.`product_description` AS `Description`, `ctg`.`category_name` AS `Category`, `pdt`.`price` AS `Price`, `pdt`.`image_path` AS `image_path` FROM (`tbl_product` `pdt` join `tbl_category` `ctg` on(`pdt`.`category_id` = `ctg`.`category_id`)) WHERE `pdt`.`deleted_at` is null ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_user_customer`
+--
+DROP TABLE IF EXISTS `view_user_customer`;
+
+DROP VIEW IF EXISTS `view_user_customer`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_user_customer`  AS SELECT `ctm`.`user_id` AS `user_id`, `ctm`.`username` AS `username`, `ctm`.`email` AS `email`, `ctm`.`password` AS `password`, `ctm`.`salt` AS `salt`, `usr`.`role_name` AS `role_name`, concat(`ctr`.`firstname`,' ',`ctr`.`lastname`) AS `CustomerName` FROM ((`tbl_user` `ctm` join `tbl_user_role` `usr` on(`ctm`.`role_id` = `usr`.`role_id`)) join `tbl_customer` `ctr` on(`ctr`.`user_id` = `ctm`.`user_id`)) WHERE `ctm`.`deleted_at` is null AND `ctm`.`role_id` = 2 ;
+
 --
 -- Indexes for dumped tables
 --
@@ -407,7 +467,7 @@ ALTER TABLE `tbl_category`
 -- AUTO_INCREMENT for table `tbl_customer`
 --
 ALTER TABLE `tbl_customer`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `tbl_customer_cart`
