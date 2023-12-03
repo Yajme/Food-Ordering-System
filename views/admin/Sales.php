@@ -1,200 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://www.cssscript.com/demo/sticky.css" rel="stylesheet" type="text/css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
 
-<head>
-    <meta charset="utf-8">
-    <title>DASHMIN - Bootstrap Admin Template</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
-
-     <!-- Favicon -->
-     <link href="img/favicon.ico" rel="icon">
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Icon Font Stylesheet -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
     <link href="../../public/admin/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
     <link href="../../public/admin/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="../../public/admin/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Template Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"  rel="stylesheet">
     <link href="../../public/admin/css/style.css" rel="stylesheet">
-</head>
 
-<body>
-    <div class="container-xxl position-relative bg-white d-flex p-0">
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
+    <link href="../../public/admin/css/style2.css" rel="stylesheet">
+    <title>Expanding Sidebar Navigation Example</title>
+  </head>
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <ul class="menu-list">
+          <li>
+            <div class="menu-container">
+              <a href="#" class="icon" id="menu">
+                <img src="../../public/admin/img/menu.svg" alt="menu" />
+              </a>
             </div>
+          </li>
+          <li>
+            <a href="#" class="icon" id="search">
+              <img src="../../public/admin/img/search.svg" alt="search" />
+            </a>
+          </li>
+          <li>
+                <a href="Dashboard.php" class="icon" id="dashboard">
+                <img src="../../public/admin/img/grid.svg" alt="dashboard" />
+                </a>
+          </li>
+          <li>
+            <a href="Sales.php" class="icon nav-item nav-link active" id="Sales">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"fill="none" viewBox="0 0 17 18">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 12v5m5-9v9m5-5v5m5-9v9M1 7l5-6 5 6 5-6"/>
+                </svg>
+            </a>
+          </li>
+          <li>
+            <a href="Products.php" class="icon nav-item nav-link" id="Products">
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.876.517A1 1 0 0 0 17 0H3a1 1 0 0 0-.871.508C1.63 1.393 0 5.385 0 6.75a3.236 3.236 0 0 0 1 2.336V19a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-6h4v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V9.044a3.242 3.242 0 0 0 1-2.294c0-1.283-1.626-5.33-2.124-6.233ZM15.5 14.7a.8.8 0 0 1-.8.8h-2.4a.8.8 0 0 1-.8-.8v-2.4a.8.8 0 0 1 .8-.8h2.4a.8.8 0 0 1 .8.8v2.4ZM16.75 8a1.252 1.252 0 0 1-1.25-1.25 1 1 0 0 0-2 0 1.25 1.25 0 0 1-2.5 0 1 1 0 0 0-2 0 1.25 1.25 0 0 1-2.5 0 1 1 0 0 0-2 0A1.252 1.252 0 0 1 3.25 8 1.266 1.266 0 0 1 2 6.75C2.306 5.1 2.841 3.501 3.591 2H16.4A19.015 19.015 0 0 1 18 6.75 1.337 1.337 0 0 1 16.75 8Z"/>
+            </svg>
+            </a>
+          </li>
+          <li>
+            <a href="Orders.php" class="icon" id="Orders">
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+            <path d="M17 5.923A1 1 0 0 0 16 5h-3V4a4 4 0 1 0-8 0v1H2a1 1 0 0 0-1 .923L.086 17.846A2 2 0 0 0 2.08 20h13.84a2 2 0 0 0 1.994-2.153L17 5.923ZM7 9a1 1 0 0 1-2 0V7h2v2Zm0-5a2 2 0 1 1 4 0v1H7V4Zm6 5a1 1 0 1 1-2 0V7h2v2Z"/>
+            </svg>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="icon" id="settings">
+              <img src="../../public/admin/img/settings.svg" alt="settings" />
+            </a>
+          </li>
+        </ul>
+        <div class="logout-container">
+          <a href="#" class="icon-logout">
+            <img src="../../public/admin/img/log-out.svg" alt="logout" />
+          </a>
         </div>
-        <!-- Spinner End -->
-
-
-        <!-- Sidebar Start -->
-        <div class="sidebar pe-4 pb-3">
-            <nav class="navbar bg-light navbar-light">
-                <a href="index.php" class="navbar-brand mx-4 mb-3">
-                    <h3 class="text-primary"><i class="fa fa-hashtag me-2"></i>DASHMIN</h3>
-                </a>
-                <div class="d-flex align-items-center ms-4 mb-4">
-                    <div class="position-relative">
-                        <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-                    </div>
-                    <div class="ms-3">
-                        <h6 class="mb-0">Jhon Doe</h6>
-                        <span>Admin</span>
-                    </div>
-                </div>
-                <div class="navbar-nav w-100">
-                    <a href="index.php" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                    <a href="Sales.php" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Sales</a>
-                    <a href="#" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Products</a>
-                    <a href="#" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Orders</a>
-                </div>
-            </nav>
-        </div>
-        <!-- Sidebar End -->
-
-
-        <!-- Content Start -->
-        <div class="content">
-            <!-- Navbar Start -->
-            <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <a href="index.php" class="navbar-brand d-flex d-lg-none me-4">
-                    <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
-                </a>
-                <a href="#" class="sidebar-toggler flex-shrink-0">
-                    <i class="fa fa-bars"></i>
-                </a>
-                <form class="d-none d-md-flex ms-4">
-                    <input class="form-control border-0" type="search" placeholder="Search">
-                </form>
-                <div class="navbar-nav align-items-center ms-auto">
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-envelope me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Message</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item text-center">See all message</a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-bell me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Notification</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">Profile updated</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">New user added</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">Password changed</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item text-center">See all notifications</a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                            <span class="d-none d-lg-inline-flex">John Doe</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">My Profile</a>
-                            <a href="#" class="dropdown-item">Settings</a>
-                            <a href="#" class="dropdown-item">Log Out</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-            <!-- Navbar End -->
-
-
-            <!-- Blank Start -->
-            <div class="col-sm-20 col-xl-20">
+      </aside>
+      <section class="main">
+        <h1>Bogszilogs Admin</h1>
+        <div style="margin:20px auto;"><div id="carbon-block"></div>
+        <!-- CSSScript Demo Page -->
+        <div class="col-sm-15 col-xl-15 childChart">
                         <div class="bg-light rounded h-100 p-4">
-                            <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+                            <div id="chartContainer" style="height: 370px; width: 80%;"></div>
                         </div>
             </div>
-
-            <!-- Blank End -->
-
-
-            <!-- Footer Start -->
-            <div class="container-fluid pt-4 px-4">
-                <div class="bg-light rounded-top p-4">
-                    <div class="row">
-                        <div class="col-12 col-sm-6 text-center text-sm-start">
-                            &copy; <a href="#">Your Site Name</a>, All Right Reserved. 
-                        </div>
-                        <div class="col-12 col-sm-6 text-center text-sm-end">
-                            <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-                            Designed By <a href="https://htmlcodex.com">HTML Codex</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Footer End -->
-        </div>
-        <!-- Content End -->
-
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+      </section>
     </div>
 
-    <!-- JavaScript Libraries -->
+
+  </body>
+  <script src="../../public/admin/js/script2.js"></script>
+  <script>
+try {
+  fetch(new Request("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", { method: 'HEAD', mode: 'no-cors' })).then(function(response) {
+    return true;
+  }).catch(function(e) {
+    var carbonScript = document.createElement("script");
+    carbonScript.src = "//cdn.carbonads.com/carbon.js?serve=CE7DC2JW&placement=wwwcssscriptcom";
+    carbonScript.id = "_carbonads_js";
+    document.getElementById("carbon-block").appendChild(carbonScript);
+  });
+} catch (error) {
+  console.log(error);
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LLWL5N9CSM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LLWL5N9CSM');
+</script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -219,7 +138,7 @@
                     valueFormatString: "MMM YYYY"
                 },
                 axisY2: {
-                    title: "Product",
+                    title: "Revenue",
                     prefix: "₱"
                 },
                 toolTip: {
@@ -240,16 +159,16 @@
                     markerSize: 0,
                     yValueFormatString: "₱#,###",
                     dataPoints: [		
-                        { x: new Date(2023, 00, 01), y: 850 },
-                        { x: new Date(2023, 01, 01), y: 889 },
-                        { x: new Date(2023, 02, 01), y: 890 },
-                        { x: new Date(2023, 03, 01), y: 899 },
-                        { x: new Date(2023, 04, 01), y: 903 },
-                        { x: new Date(2023, 05, 01), y: 925 },
-                        { x: new Date(2023, 06, 01), y: 899 },
-                        { x: new Date(2023, 07, 01), y: 875 },
-                        { x: new Date(2023, 08, 01), y: 927 },
-                        { x: new Date(2023, 09, 01), y: 949 }
+                        { x: new Date(2023, 1, 1), y: 850 },
+                        { x: new Date(2023, 1, 10), y: 889 },
+                        { x: new Date(2023, 2, 1), y: 890 },
+                        { x: new Date(2023, 3, 1), y: 899 },
+                        { x: new Date(2023, 4, 1), y: 903 },
+                        { x: new Date(2023, 5, 1), y: 925 },
+                        { x: new Date(2023, 6, 1), y: 899 },
+                        { x: new Date(2023, 7, 1), y: 875 },
+                        { x: new Date(2023, 8, 1), y: 927 },
+                        { x: new Date(2023, 9, 1), y: 949 }
                     ]
                 },
                 {
@@ -260,16 +179,16 @@
                     markerSize: 0,
                     yValueFormatString: "₱#,###",
                     dataPoints: [
-                        { x: new Date(2023, 00, 01), y: 1200 },
-                        { x: new Date(2023, 01, 01), y: 1200 },
-                        { x: new Date(2023, 02, 01), y: 1190 },
-                        { x: new Date(2023, 03, 01), y: 1180 },
-                        { x: new Date(2023, 04, 01), y: 1250 },
-                        { x: new Date(2023, 05, 01), y: 1270 },
-                        { x: new Date(2023, 06, 01), y: 1300 },
-                        { x: new Date(2023, 07, 01), y: 1300 },
-                        { x: new Date(2023, 08, 01), y: 1358 },
-                        { x: new Date(2023, 09, 01), y: 1410 }
+                        { x: new Date(2023, 1, 1), y: 1200 },
+                        { x: new Date(2023, 1, 12), y: 1200 },
+                        { x: new Date(2023, 2, 1), y: 1190 },
+                        { x: new Date(2023, 3, 1), y: 1180 },
+                        { x: new Date(2023, 4, 1), y: 1250 },
+                        { x: new Date(2023, 5, 1), y: 1270 },
+                        { x: new Date(2023, 6, 1), y: 1300 },
+                        { x: new Date(2023, 7, 1), y: 1300 },
+                        { x: new Date(2023, 8, 1), y: 1358 },
+                        { x: new Date(2023, 9, 1), y: 1410 }
                         
                     ]
                 },
@@ -281,16 +200,16 @@
                     markerSize: 0,
                     yValueFormatString: "₱#,###",
                     dataPoints: [
-                        { x: new Date(2023, 00, 01), y: 409 },
-                        { x: new Date(2023, 01, 01), y: 415 },
-                        { x: new Date(2023, 02, 01), y: 419 },
-                        { x: new Date(2023, 03, 01), y: 429 },
-                        { x: new Date(2023, 04, 01), y: 429 },
-                        { x: new Date(2023, 05, 01), y: 450 },
-                        { x: new Date(2023, 06, 01), y: 450 },
-                        { x: new Date(2023, 07, 01), y: 445 },
-                        { x: new Date(2023, 08, 01), y: 450 },
-                        { x: new Date(2023, 09, 01), y: 450 }
+                        { x: new Date(2023, 1, 1), y: 409 },
+                        { x: new Date(2023, 1, 15), y: 415 },
+                        { x: new Date(2023, 2, 1), y: 419 },
+                        { x: new Date(2023, 3, 1), y: 429 },
+                        { x: new Date(2023, 4, 1), y: 429 },
+                        { x: new Date(2023, 5, 1), y: 450 },
+                        { x: new Date(2023, 6, 1), y: 450 },
+                        { x: new Date(2023, 7, 1), y: 445 },
+                        { x: new Date(2023, 8, 1), y: 450 },
+                        { x: new Date(2023, 9, 1), y: 450 }
                     ]
                 },
                 {
@@ -301,16 +220,16 @@
                     markerSize: 0,
                     yValueFormatString: "₱####",
                     dataPoints: [
-                        { x: new Date(2023, 00, 01), y: 529 },
-                        { x: new Date(2023, 01, 01), y: 540 },
-                        { x: new Date(2023, 02, 01), y: 539 },
-                        { x: new Date(2023, 03, 01), y: 565 },
-                        { x: new Date(2023, 04, 01), y: 575 },
-                        { x: new Date(2023, 05, 01), y: 579 },
-                        { x: new Date(2023, 06, 01), y: 589 },
-                        { x: new Date(2023, 07, 01), y: 579 },
-                        { x: new Date(2023, 08, 01), y: 579 },
-                        { x: new Date(2023, 09, 01), y: 579 }
+                        { x: new Date(2023, 1, 1), y: 529 },
+                        { x: new Date(2023, 2, 4), y: 540 },
+                        { x: new Date(2023, 2, 1), y: 539 },
+                        { x: new Date(2023, 3, 1), y: 565 },
+                        { x: new Date(2023, 4, 1), y: 575 },
+                        { x: new Date(2023, 5, 1), y: 579 },
+                        { x: new Date(2023, 6, 1), y: 589 },
+                        { x: new Date(2023, 7, 1), y: 579 },
+                        { x: new Date(2023, 8, 1), y: 579 },
+                        { x: new Date(2023, 9, 1), y: 579 }
                         
                     ]
                 }]
@@ -328,7 +247,5 @@
 
             }
     </script>
-
-</body>
-
+    
 </html>
