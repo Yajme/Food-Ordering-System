@@ -1,19 +1,77 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "db_boos";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $database);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+interface IFunctions{
+    public function execute($query);
+    public function read($query);
+    public function escape_string($value);
+    
 }
+abstract class Database implements IFunctions
+{
+    private $servername = "localhost";
+    private $username = "root";
+    private $password = "";
+    private $database = "db_boos";
+    protected $connection;
 
-echo "Connected successfully";
+    public function __construct()
+    {
+        if (!isset($this->connection)) 
+        {
+            $this->connection = new mysqli($this->servername, $this->username, $this->password, $this->database);
 
-// Close connection when you're done
-$conn->close();
+            // Check the connection
+            if ($this->connection->connect_error) {
+                die('Cannot connect to the database server: ' . $this->connection->connect_error);
+            }
+        }
+
+        return $this->connection;
+    }
+    private function fetchRows($result) {
+        $dataArray = array();
+    
+        while ($row = $result->fetch_assoc()) {
+            // Create a new associative array for each row
+            $rowData = array();
+    
+            // Iterate over each column in the row
+            foreach ($row as $columnName => $columnValue) {
+                // Add each column to the $rowData array
+                $rowData[$columnName] = $columnValue;
+            }
+    
+            // Append the row data to the main array
+            $dataArray[] = $rowData;
+        }
+    
+        return $dataArray;
+    }
+
+    public function execute($query){
+        return  $this->connection->query($query);
+    }
+    public function read($query){
+        $result = $this->connection->query($query);
+        //@Exception if no data found
+        if (!$result) throw new Exception("No Data Found");
+         
+        return $this->fetchRows($result);
+    }
+    public function escape_string($value) {
+        // Check if the input is a valid string
+        if (!is_string($value)) {
+            throw new Exception('Invalid input: $value must be a string.');
+        }
+        // Escape the string
+        $escapedValue = $this->connection->real_escape_string($value);
+    
+        // Check if the escape was successful
+        if ($escapedValue === false) {
+            throw new Exception('Invalid input: $value must be valid');
+        }
+        return $escapedValue;
+    }
+    
+}
 ?>
