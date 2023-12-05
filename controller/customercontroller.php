@@ -6,10 +6,9 @@ require_once '../../utils/authentication.php';
 require_once '../../model/productmodel.php';
 
 interface ICustomer{
-   //WIP FOR CART etc
-   //public function Register();
-   public function LoadCategories();
-
+    
+    public function Products($Function, $params = array());
+    public function Cart($Function, $params = array());
 }
 abstract class BaseCustomer implements ICustomer, ILogin{
     
@@ -19,10 +18,28 @@ abstract class BaseCustomer implements ICustomer, ILogin{
         if(empty($password)) throw new Exception('Password cannot be empty!');
     }
 
-    
+    public function Products($Function, $params = array())
+    {
+        try{
+            return  $this->initializeProductModel(new ProductModel())->$Function($params);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function Cart($Function, $params = array())
+    {
+        try{
+            return  $this->initializeUserModel(new UserModel())->$Function($params);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    private function initializeProductModel(ProductModel $product){return $product;}
+    private function initializeUserModel(UserModel $user){return $user;}
 }
 class CustomerController extends BaseCustomer {
     protected $user;
+    protected $product;
     public function __construct()
     {
         //Initialize Object user in @class UserModel
@@ -49,35 +66,59 @@ class CustomerController extends BaseCustomer {
             throw $e;
         }
     }
+    
+    /**
+     * List of Functions for loading categories and products
+     * 1. LoadCategories()
+     * 2. LoadFeaturedProducts()
+     * 3. recentProducts()
+     * 4. loadAvailableProducts()
+     * 5. filterbyCategory($categories)
+     * 6. filterbyPrice($min,$max)
+     * 7. selectProductBySearch($search)
+     */
+   
+    
 
-    public function LoadCategories(){
+
+
+    public function loadAvailableProducts(){
         try{
             $product = new ProductModel();
-            $categories = $product->loadCategories();
-            return $categories;
+            $availableProducts = $product->selectAllProducts();
+            return $availableProducts;
         }catch(Exception $e){
             throw $e;
         }
     }
 
-    public function LoadFeaturedProducts(){
+    public function filterbyCategory($categories){
         try{
             $product = new ProductModel();
-            $featuredProducts = $product->loadFeaturedProducts();
-            return $featuredProducts;
+            $availableProducts = $product->selectProductByCategory($categories);
+            return $availableProducts;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function filterbyPrice($min,$max){
+        try{
+            $product = new ProductModel();
+            $availableProducts = $product->selectProductByPrice($min,$max);
+            return $availableProducts;
         }catch(Exception $e){
             throw $e;
         }
     }
 
-    public function recentProducts(){
+    public function selectProductBySearch($search){
         try{
             $product = new ProductModel();
-            $recentProducts = $product->recentProducts();
-            return $recentProducts;
+            $availableProducts = $product->selectProductBySearch($search);
+            return $availableProducts;
         }catch(Exception $e){
             throw $e;
         }
     }
-}
+}   
 ?> 
