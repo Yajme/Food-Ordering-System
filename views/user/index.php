@@ -1,9 +1,14 @@
 <?php include_once '../partials/shop-header.php';
 
-$Controller = new CustomerController();
-$categories = $Controller->LoadCategories();
-$featuredProducts = $Controller->LoadFeaturedProducts();
-$recentProducts = $Controller->recentProducts();
+
+try{
+    $Controller = new CustomerController();
+    $categories = $Controller->Products('LoadCategories');
+    $featuredProducts = $Controller->Products('LoadFeaturedProducts');
+    $recentProducts = $Controller->Products('recentProducts');
+}catch(Exception $e){
+    $_SESSION['error'] = $e->getMessage();
+}
 ?>
     
     <!-- Carousel Start -->
@@ -103,7 +108,7 @@ $recentProducts = $Controller->recentProducts();
             <!--Categories Slider Item Start-->
             <?php foreach($categories as $category): ?>
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                    <a class="text-decoration-none" href="">
+                    <a class="text-decoration-none" href="shop?category=<?php echo $category['Category']; ?>">
                         <div class="cat-item d-flex align-items-center mb-4">
                             <div class="overflow-hidden" style="width: 100px; height: 100px;">
                                 <img class="img-fluid" src="<?php echo $category['image_path']; ?>" alt="">

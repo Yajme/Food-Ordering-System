@@ -14,6 +14,24 @@ class ProductModel extends Database {
     }
 
     public function selectProductByCategory($category){
+        
+        if(is_array($category)){
+            $params = '';
+            foreach($category as $cat){
+
+                    $cat = $this->escape_string($cat);
+                    $params .= "'$cat',";
+                
+                
+            }
+            $params = rtrim($params,',');
+
+            $query = "SELECT * FROM view_availableproducts WHERE category IN ($params)";
+            $rows = $this->read($query);
+            if(!$rows) throw new Exception("No products found");
+            return $rows;
+        }
+
         $category = $this->escape_string($category);
         $query = "SELECT * FROM view_availableproducts WHERE category = '$category'";
         $rows = $this->read($query);
@@ -23,7 +41,7 @@ class ProductModel extends Database {
 
     public function selectProductBySearch($search){
         $search = $this->escape_string($search);
-        $query = "SELECT * FROM view_availableproducts WHERE productname LIKE '%$search%'";
+        $query = "SELECT * FROM view_availableproducts WHERE `Product Name` LIKE '%$search%'";
         $rows = $this->read($query);
         if(!$rows) throw new Exception("No products found");
         return $rows;
@@ -45,6 +63,14 @@ class ProductModel extends Database {
 
     public function recentProducts(){
         $query = "SELECT * FROM view_availableproducts ORDER BY created_at DESC LIMIT 5";
+        $rows = $this->read($query);
+        if(!$rows) throw new Exception("No products found");
+        return $rows;
+    }
+    public function selectProductByPrice($min,$max){
+        $min = $this->escape_string($min);
+        $max = $this->escape_string($max);
+        $query = "SELECT * FROM view_availableproducts WHERE price BETWEEN $min AND $max";
         $rows = $this->read($query);
         if(!$rows) throw new Exception("No products found");
         return $rows;

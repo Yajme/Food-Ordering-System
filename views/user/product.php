@@ -1,4 +1,40 @@
-<?php include_once '../partials/shop-header.php'?>
+<?php include_once '../partials/shop-header.php';
+
+try{
+    $customer = new CustomerController();
+    if(!isset($_POST['add-cart'])){
+        if(!isset($_GET['name'])){
+            header('location: shop');
+        }else{
+            $_SESSION['product'] = null;
+            $product = $customer->selectProductBySearch($_GET['name']);
+            $product = $product[0];
+            $_SESSION['product'] = $product;
+        }
+    }else{
+        $product = $_SESSION['product'];
+        if(!isset($_COOKIE['customerid'])){
+            echo '<script>alert("Please login first")</script>';
+        }else{
+            $cart = array(
+                'productid'=> $product['ID'],
+                'quantity'=> $_POST['quantityForm'],
+                'customerid'=>$_COOKIE['customerid']
+            );
+            $customer->Cart('addToCart',array($cart));
+        }
+        
+        
+        //$customer->Cart('addToCart',array($cart));
+        
+        //unset($_SESSION['product']);
+    }
+}catch(Exception $e){
+    $_SESSION['error'] = $e->getMessage();
+}
+
+
+?>
 
     <!-- Breadcrumb Start -->
     <div class="container-fluid">
@@ -7,7 +43,7 @@
                 <nav class="breadcrumb bg-light mb-30">
                     <a class="breadcrumb-item text-dark" href="#">Home</a>
                     <a class="breadcrumb-item text-dark" href="#">Shop</a>
-                    <span class="breadcrumb-item active">Shop Detail</span>
+                    <span class="breadcrumb-item active"><?php echo $product['Product Name'] ?></span>
                 </nav>
             </div>
         </div>
@@ -22,16 +58,7 @@
                 <div id="product-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner bg-light">
                         <div class="carousel-item active">
-                            <img class="w-100 h-100" src="img/product-1.jpg" alt="Image">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="img/product-2.jpg" alt="Image">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="img/product-3.jpg" alt="Image">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="img/product-4.jpg" alt="Image">
+                            <img class="w-100 h-100" src="<?php echo $product['image_path']?>" alt="Image">
                         </div>
                     </div>
                     <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
@@ -45,21 +72,9 @@
 
             <div class="col-lg-7 h-auto mb-30">
                 <div class="h-100 bg-light p-30">
-                    <h3>Product Name Goes Here</h3>
-                    <div class="d-flex mb-3">
-                        <div class="text-primary mr-2">
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star-half-alt"></small>
-                            <small class="far fa-star"></small>
-                        </div>
-                        <small class="pt-1">(99 Reviews)</small>
-                    </div>
-                    <h3 class="font-weight-semi-bold mb-4">$150.00</h3>
-                    <p class="mb-4">Volup erat ipsum diam elitr rebum et dolor. Est nonumy elitr erat diam stet sit
-                        clita ea. Sanc ipsum et, labore clita lorem magna duo dolor no sea
-                        Nonumy</p>
+                    <h3><?php echo $product['Product Name'] ?></h3>
+                    <h3 class="font-weight-semi-bold mb-4"><?php echo '₱'.$product['Price'] ?></h3>
+                    <p class="mb-4"><?php echo $product['Description'] ?></p>
                     <div class="d-flex mb-3">
                         <strong class="text-dark mr-3">Sizes:</strong>
                         <form>
@@ -110,39 +125,67 @@
                             </div>
                         </form>
                     </div>
+                    
                     <div class="d-flex align-items-center mb-4 pt-2">
-                        <div class="input-group quantity mr-3" style="width: 130px;">
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary btn-minus">
-                                    <i class="fa fa-minus"></i>
-                                </button>
-                            </div>
-                            <input type="text" class="form-control bg-secondary border-0 text-center" value="1">
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary btn-plus">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To
-                            Cart</button>
-                    </div>
-                    <div class="d-flex pt-2">
-                        <strong class="text-dark mr-2">Share on:</strong>
-                        <div class="d-inline-flex">
-                            <a class="text-dark px-2" href="">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a class="text-dark px-2" href="">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a class="text-dark px-2" href="">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                            <a class="text-dark px-2" href="">
-                                <i class="fab fa-pinterest"></i>
-                            </a>
-                        </div>
+                        
+                            <div class="input-group quantity mr-3" style="width: 130px;">
+                                
+                                <div class="input-group-btn">
+                                    <button class="btn btn-primary btn-minus" id="btn-minus">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control bg-secondary border-0 text-center" value="1" name="quantity">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary btn-plus" id="btn-plus">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                            </div> 
+                           
+                        
+                            <form  method="post" id="product">
+                            <input type="hidden" name="quantityForm" id="form-quantity" value="1">
+                        <button type= "submit"  class="btn btn-primary px-3" id="add-cart" name="add-cart"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
+                        </form>
+                        
+                                
+                    <script>
+                        document.getElementById('btn-plus').addEventListener('click',function(){
+                            var quantity = document.querySelector('input[name="quantity"]');
+                            quantity.value = parseInt(quantity.value) + 1;
+                            document.querySelector('#form-quantity').value = quantity.value;
+                        });
+                        document.getElementById('btn-minus').addEventListener('click',function(){
+                            var quantity = document.querySelector('input[name="quantity"]');
+                            if(parseInt(quantity.value) > 1){
+                            quantity.value = parseInt(quantity.value) - 1;
+                            document.querySelector('#form-quantity').value = quantity.value;
+                            }
+                        });
+                       
+                       function getCookie(cookieName) {
+                        const name = cookieName + "=";
+                        const decodedCookie = decodeURIComponent(document.cookie);
+                        const cookieArray = decodedCookie.split(';');
+
+                        for (let i = 0; i < cookieArray.length; i++) {
+                            let cookie = cookieArray[i].trim();
+                            if (cookie.indexOf(name) === 0) {
+                                return cookie.substring(name.length, cookie.length);
+                            }
+                        }
+                        return null;  // Return null if the cookie is not found
+                        }
+                        const forms = document.querySelector('#product');
+                        forms.addEventListener('submit', handleFormSubmission(event));
+                        function handleFormSubmission(event) {
+                            event.preventDefault(); 
+                            var quantity = Number(document.querySelector('input[name="quantity"]').value);
+                            var formQuantity = Number(document.querySelector('#form-quantity').value);
+                            formQuantity = quantity;
+                        }   
+                    </script>
                     </div>
                 </div>
             </div>
@@ -158,8 +201,7 @@
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="tab-pane-1">
                             <h4 class="mb-3">Product Description</h4>
-                            <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
-                            <p>Dolore magna est eirmod sanctus dolor, amet diam et eirmod et ipsum. Amet dolore tempor consetetur sed lorem dolor sit lorem tempor. Gubergren amet amet labore sadipscing clita clita diam clita. Sea amet et sed ipsum lorem elitr et, amet et labore voluptua sit rebum. Ea erat sed et diam takimata sed justo. Magna takimata justo et amet magna et.</p>
+                            <p><?php echo $product['Description'] ?></p>
                         </div>
                         <div class="tab-pane fade" id="tab-pane-2">
                             <h4 class="mb-3">Additional Information</h4>
