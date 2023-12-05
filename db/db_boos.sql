@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 03, 2023 at 03:08 PM
+-- Generation Time: Dec 05, 2023 at 10:41 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -133,7 +133,7 @@ DROP TABLE IF EXISTS `tbl_order`;
 CREATE TABLE `tbl_order` (
   `order_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
-  `status_id` int(11) NOT NULL,
+  `order_status` enum('Preparing','Pending','Shipping','Delivered','Cancelled') NOT NULL DEFAULT 'Preparing',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `modified_at` datetime NOT NULL DEFAULT current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
@@ -172,29 +172,6 @@ CREATE TABLE `tbl_order_records` (
   `created_at` datetime DEFAULT current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tbl_order_status`
---
-
-DROP TABLE IF EXISTS `tbl_order_status`;
-CREATE TABLE `tbl_order_status` (
-  `status_id` int(11) NOT NULL,
-  `status_name` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_order_status`
---
-
-INSERT INTO `tbl_order_status` (`status_id`, `status_name`) VALUES
-(1, 'Pending'),
-(2, 'Preparing'),
-(3, 'Shipping'),
-(4, 'Delivered'),
-(5, 'Cancelled');
 
 -- --------------------------------------------------------
 
@@ -244,9 +221,34 @@ CREATE TABLE `tbl_product` (
 --
 
 INSERT INTO `tbl_product` (`product_id`, `category_id`, `product_name`, `product_description`, `price`, `image_path`, `created_at`, `modified_at`, `deleted_at`) VALUES
-(1, 3, 'HugSiLog', 'Hungarian Hotdog, Sinangag, Itlog', 110.00, NULL, '2023-12-02 20:18:59', '2023-12-02 20:18:59', NULL),
-(2, 4, 'Chicken Teriyaki', 'Chicken Teriyaki', 175.00, NULL, '2023-12-02 20:19:57', '2023-12-02 20:19:57', NULL),
-(3, 1, 'Pork Tonkatsu', 'Pork Tonkatsu', 180.00, NULL, '2023-12-02 20:20:40', '2023-12-02 20:20:40', NULL);
+(1, 3, 'HugSiLog', 'Hungarian Hotdog, Sinangag, Itlog', 110.00, '../../public/assets/hugsilog.jpg', '2023-12-02 20:18:59', '2023-12-02 20:18:59', NULL),
+(2, 4, 'Chicken Teriyaki', 'Chicken Teriyaki', 175.00, '../../public/assets/chickenteriyaki.jpg', '2023-12-02 20:19:57', '2023-12-02 20:19:57', NULL),
+(3, 1, 'Pork Tonkatsu', 'Pork Tonkatsu', 180.00, '../../public/assets/porktonkatsu.jpg', '2023-12-02 20:20:40', '2023-12-02 20:20:40', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_product_featured`
+--
+
+DROP TABLE IF EXISTS `tbl_product_featured`;
+CREATE TABLE `tbl_product_featured` (
+  `featureID` int(11) NOT NULL,
+  `feature_slot` enum('1','2','3','4','5') NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_product_featured`
+--
+
+INSERT INTO `tbl_product_featured` (`featureID`, `feature_slot`, `product_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, '1', 1, '2023-12-05 16:27:17', '2023-12-05 16:27:17', NULL),
+(2, '2', 3, '2023-12-05 16:32:19', '2023-12-05 16:32:19', NULL),
+(3, '3', 2, '2023-12-05 16:32:30', '2023-12-05 16:32:30', NULL);
 
 -- --------------------------------------------------------
 
@@ -309,6 +311,22 @@ CREATE TABLE `view_availableproducts` (
 ,`Category` varchar(50)
 ,`Price` decimal(10,2)
 ,`image_path` varchar(255)
+,`created_at` datetime
+,`modified_at` datetime
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_featured_products`
+-- (See below for the actual view)
+--
+DROP VIEW IF EXISTS `view_featured_products`;
+CREATE TABLE `view_featured_products` (
+`Slot` enum('1','2','3','4','5')
+,`ProductName` varchar(50)
+,`Price` decimal(10,2)
+,`image_path` varchar(255)
 );
 
 -- --------------------------------------------------------
@@ -336,7 +354,17 @@ CREATE TABLE `view_user_customer` (
 DROP TABLE IF EXISTS `view_availableproducts`;
 
 DROP VIEW IF EXISTS `view_availableproducts`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_availableproducts`  AS SELECT `pdt`.`product_id` AS `ID`, `pdt`.`product_name` AS `Product Name`, `pdt`.`product_description` AS `Description`, `ctg`.`category_name` AS `Category`, `pdt`.`price` AS `Price`, `pdt`.`image_path` AS `image_path` FROM (`tbl_product` `pdt` join `tbl_category` `ctg` on(`pdt`.`category_id` = `ctg`.`category_id`)) WHERE `pdt`.`deleted_at` is null ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_availableproducts`  AS SELECT `pdt`.`product_id` AS `ID`, `pdt`.`product_name` AS `Product Name`, `pdt`.`product_description` AS `Description`, `ctg`.`category_name` AS `Category`, `pdt`.`price` AS `Price`, `pdt`.`image_path` AS `image_path`, `pdt`.`created_at` AS `created_at`, `pdt`.`modified_at` AS `modified_at` FROM (`tbl_product` `pdt` join `tbl_category` `ctg` on(`pdt`.`category_id` = `ctg`.`category_id`)) WHERE `pdt`.`deleted_at` is null ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_featured_products`
+--
+DROP TABLE IF EXISTS `view_featured_products`;
+
+DROP VIEW IF EXISTS `view_featured_products`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_featured_products`  AS SELECT `ftp`.`feature_slot` AS `Slot`, `pdt`.`product_name` AS `ProductName`, `pdt`.`price` AS `Price`, `pdt`.`image_path` AS `image_path` FROM (`tbl_product_featured` `ftp` join `tbl_product` `pdt` on(`ftp`.`product_id` = `pdt`.`product_id`)) WHERE `pdt`.`deleted_at` is null ;
 
 -- --------------------------------------------------------
 
@@ -394,8 +422,7 @@ ALTER TABLE `tbl_invoice`
 --
 ALTER TABLE `tbl_order`
   ADD PRIMARY KEY (`order_id`),
-  ADD KEY `customer_id` (`customer_id`),
-  ADD KEY `status_id` (`status_id`);
+  ADD KEY `customer_id` (`customer_id`);
 
 --
 -- Indexes for table `tbl_order_details`
@@ -413,12 +440,6 @@ ALTER TABLE `tbl_order_records`
   ADD KEY `transaction_id` (`transaction_id`);
 
 --
--- Indexes for table `tbl_order_status`
---
-ALTER TABLE `tbl_order_status`
-  ADD PRIMARY KEY (`status_id`);
-
---
 -- Indexes for table `tbl_payment_method`
 --
 ALTER TABLE `tbl_payment_method`
@@ -431,6 +452,14 @@ ALTER TABLE `tbl_payment_method`
 ALTER TABLE `tbl_product`
   ADD PRIMARY KEY (`product_id`),
   ADD KEY `category_id` (`category_id`);
+
+--
+-- Indexes for table `tbl_product_featured`
+--
+ALTER TABLE `tbl_product_featured`
+  ADD PRIMARY KEY (`featureID`),
+  ADD UNIQUE KEY `feature_slot` (`feature_slot`),
+  ADD UNIQUE KEY `product_id` (`product_id`);
 
 --
 -- Indexes for table `tbl_user`
@@ -500,12 +529,6 @@ ALTER TABLE `tbl_order_records`
   MODIFY `record_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tbl_order_status`
---
-ALTER TABLE `tbl_order_status`
-  MODIFY `status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
 -- AUTO_INCREMENT for table `tbl_payment_method`
 --
 ALTER TABLE `tbl_payment_method`
@@ -516,6 +539,12 @@ ALTER TABLE `tbl_payment_method`
 --
 ALTER TABLE `tbl_product`
   MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `tbl_product_featured`
+--
+ALTER TABLE `tbl_product_featured`
+  MODIFY `featureID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_user`
@@ -563,8 +592,7 @@ ALTER TABLE `tbl_invoice`
 -- Constraints for table `tbl_order`
 --
 ALTER TABLE `tbl_order`
-  ADD CONSTRAINT `tbl_order_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `tbl_customer` (`customer_id`),
-  ADD CONSTRAINT `tbl_order_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `tbl_order_status` (`status_id`);
+  ADD CONSTRAINT `tbl_order_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `tbl_customer` (`customer_id`);
 
 --
 -- Constraints for table `tbl_order_details`
@@ -584,6 +612,12 @@ ALTER TABLE `tbl_order_records`
 --
 ALTER TABLE `tbl_product`
   ADD CONSTRAINT `tbl_product_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `tbl_category` (`category_id`);
+
+--
+-- Constraints for table `tbl_product_featured`
+--
+ALTER TABLE `tbl_product_featured`
+  ADD CONSTRAINT `tbl_product_featured_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `tbl_product` (`product_id`);
 
 --
 -- Constraints for table `tbl_user`
