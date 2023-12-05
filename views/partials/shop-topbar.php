@@ -13,8 +13,9 @@
                                 <?php echo $_SESSION['user_name'] ?>
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <!-- Add a logout button inside the dropdown -->
+                                <a href="order" class="dropdown-item">Orders</a>
                                 <button type="submit" class="dropdown-item" name="logout">Logout</button>
+                                
                             </div>
                         </div>
                     </form>
@@ -25,7 +26,6 @@
                 <a class="text-body mr-3" href="signup">Sign up</a>
 
                 <?php
-                echo $_COOKIE['userid'];
             }?>
             </div>
         </div>

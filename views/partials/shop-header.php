@@ -1,3 +1,4 @@
+<?php include_once '../../controller/customercontroller.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">  
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
     <link href="../../public/user/lib/animate/animate.min.css" rel="stylesheet">
