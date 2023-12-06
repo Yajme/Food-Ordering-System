@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 05, 2023 at 10:41 AM
+-- Generation Time: Dec 05, 2023 at 06:37 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -100,11 +100,22 @@ INSERT INTO `tbl_customer` (`customer_id`, `user_id`, `firstname`, `lastname`, `
 DROP TABLE IF EXISTS `tbl_customer_cart`;
 CREATE TABLE `tbl_customer_cart` (
   `cart_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `modified_at` datetime NOT NULL DEFAULT current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_customer_cart`
+--
+
+INSERT INTO `tbl_customer_cart` (`cart_id`, `product_id`, `customer_id`, `quantity`, `created_at`, `modified_at`, `deleted_at`) VALUES
+(1, 1, 1, 11, '2023-12-06 00:24:08', '2023-12-06 00:56:10', NULL),
+(2, 2, 1, 1, '2023-12-06 01:05:23', '2023-12-06 01:05:23', NULL),
+(3, 3, 1, 1, '2023-12-06 01:05:26', '2023-12-06 01:33:51', NULL);
 
 -- --------------------------------------------------------
 
@@ -318,6 +329,23 @@ CREATE TABLE `view_availableproducts` (
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `view_customer_cart`
+-- (See below for the actual view)
+--
+DROP VIEW IF EXISTS `view_customer_cart`;
+CREATE TABLE `view_customer_cart` (
+`cart_id` int(11)
+,`customer_id` int(11)
+,`product_id` int(11)
+,`product_name` varchar(50)
+,`price` decimal(10,2)
+,`quantity` int(11)
+,`cart_total` decimal(20,2)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `view_featured_products`
 -- (See below for the actual view)
 --
@@ -343,6 +371,7 @@ CREATE TABLE `view_user_customer` (
 ,`password` varchar(255)
 ,`salt` varchar(10)
 ,`role_name` varchar(50)
+,`customerid` int(11)
 ,`CustomerName` varchar(101)
 );
 
@@ -355,6 +384,16 @@ DROP TABLE IF EXISTS `view_availableproducts`;
 
 DROP VIEW IF EXISTS `view_availableproducts`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_availableproducts`  AS SELECT `pdt`.`product_id` AS `ID`, `pdt`.`product_name` AS `Product Name`, `pdt`.`product_description` AS `Description`, `ctg`.`category_name` AS `Category`, `pdt`.`price` AS `Price`, `pdt`.`image_path` AS `image_path`, `pdt`.`created_at` AS `created_at`, `pdt`.`modified_at` AS `modified_at` FROM (`tbl_product` `pdt` join `tbl_category` `ctg` on(`pdt`.`category_id` = `ctg`.`category_id`)) WHERE `pdt`.`deleted_at` is null ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_customer_cart`
+--
+DROP TABLE IF EXISTS `view_customer_cart`;
+
+DROP VIEW IF EXISTS `view_customer_cart`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_customer_cart`  AS SELECT `ctc`.`cart_id` AS `cart_id`, `ctc`.`customer_id` AS `customer_id`, `pdt`.`product_id` AS `product_id`, `pdt`.`product_name` AS `product_name`, `pdt`.`price` AS `price`, `ctc`.`quantity` AS `quantity`, `pdt`.`price`* `ctc`.`quantity` AS `cart_total` FROM (`tbl_customer_cart` `ctc` join `tbl_product` `pdt` on(`ctc`.`product_id` = `pdt`.`product_id`)) WHERE `ctc`.`deleted_at` is null ;
 
 -- --------------------------------------------------------
 
@@ -374,7 +413,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `view_user_customer`;
 
 DROP VIEW IF EXISTS `view_user_customer`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_user_customer`  AS SELECT `ctm`.`user_id` AS `user_id`, `ctm`.`username` AS `username`, `ctm`.`email` AS `email`, `ctm`.`password` AS `password`, `ctm`.`salt` AS `salt`, `usr`.`role_name` AS `role_name`, concat(`ctr`.`firstname`,' ',`ctr`.`lastname`) AS `CustomerName` FROM ((`tbl_user` `ctm` join `tbl_user_role` `usr` on(`ctm`.`role_id` = `usr`.`role_id`)) join `tbl_customer` `ctr` on(`ctr`.`user_id` = `ctm`.`user_id`)) WHERE `ctm`.`deleted_at` is null AND `ctm`.`role_id` = 2 ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_user_customer`  AS SELECT `ctm`.`user_id` AS `user_id`, `ctm`.`username` AS `username`, `ctm`.`email` AS `email`, `ctm`.`password` AS `password`, `ctm`.`salt` AS `salt`, `usr`.`role_name` AS `role_name`, `ctr`.`customer_id` AS `customerid`, concat(`ctr`.`firstname`,' ',`ctr`.`lastname`) AS `CustomerName` FROM ((`tbl_user` `ctm` join `tbl_user_role` `usr` on(`ctm`.`role_id` = `usr`.`role_id`)) join `tbl_customer` `ctr` on(`ctr`.`user_id` = `ctm`.`user_id`)) WHERE `ctm`.`deleted_at` is null AND `ctm`.`role_id` = 2 ;
 
 --
 -- Indexes for dumped tables
@@ -407,6 +446,7 @@ ALTER TABLE `tbl_customer`
 --
 ALTER TABLE `tbl_customer_cart`
   ADD PRIMARY KEY (`cart_id`),
+  ADD KEY `product_id` (`product_id`),
   ADD KEY `customer_id` (`customer_id`);
 
 --
@@ -502,7 +542,7 @@ ALTER TABLE `tbl_customer`
 -- AUTO_INCREMENT for table `tbl_customer_cart`
 --
 ALTER TABLE `tbl_customer_cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_invoice`
@@ -579,7 +619,8 @@ ALTER TABLE `tbl_customer`
 -- Constraints for table `tbl_customer_cart`
 --
 ALTER TABLE `tbl_customer_cart`
-  ADD CONSTRAINT `tbl_customer_cart_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `tbl_customer` (`customer_id`);
+  ADD CONSTRAINT `tbl_customer_cart_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `tbl_product` (`product_id`),
+  ADD CONSTRAINT `tbl_customer_cart_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `tbl_customer` (`customer_id`);
 
 --
 -- Constraints for table `tbl_invoice`

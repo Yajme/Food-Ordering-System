@@ -1,4 +1,11 @@
-<?php session_start();?>
+<?php session_start();
+
+if(!isset($_COOKIE['customerid'])){
+    //header('location: login');
+    unset($_SESSION['product']);
+    unset($_SESSION['user_name']);
+}
+?>
 <div class="container-fluid">
     <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
         <div class="col-lg-6 d-none d-lg-block">
