@@ -31,7 +31,7 @@ try{
                                 <div class="p-3" style="max-width: 700px;">
                                     <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Exquisite Bento Creations</h1>
                                     <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Savor the artistry in every bite with our carefully prepared Bento boxes. Satisfy your cravings with our wholesome and hearty Bento options.</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="shop">Shop Now</a>
                                 </div>
                             </div>
                         </div>
@@ -42,7 +42,7 @@ try{
                                 <div class="p-3" style="max-width: 700px;">
                                     <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Silog Meals</h1>
                                     <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Start your day with a hearty Silog breakfast.  Taste the comfort of homestyle cooking in our Silog selections.</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="shop">Shop Now</a>
                                 </div>
                             </div>
                         </div>
@@ -53,7 +53,7 @@ try{
                                 <div class="p-3" style="max-width: 700px;">
                                     <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Tonkatsu</h1>
                                     <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Savor the melt-in-your-mouth goodness of our Tonkatsu, expertly prepared for a dining experience like no other.</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="shop">Shop Now</a>
                                 </div>
                             </div>
                         </div>

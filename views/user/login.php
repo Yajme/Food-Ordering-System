@@ -1,10 +1,6 @@
 <?php 
 include_once '../partials/shop-header.php';
 
-
-
-   
-
     // Check if the form is submitted
     if (isset($_POST['login'])) {
         try{
@@ -31,13 +27,20 @@ include_once '../partials/shop-header.php';
         <div class="row px-xl-5">
 
             <div class="col-lg-7 mb-5">
-            <p class="help-block text-danger">
-            <?php if(isset($_SESSION['errorMessage'])){ 
-                echo $_SESSION['errorMessage'];
-                unset($_SESSION['errorMessage']);
-            }
-            ?>
-            </p>
+                    <?php if(isset($_SESSION['Message'])){?>
+                        <p class="help-block text-success">
+                            <?php echo $_SESSION['Message'];
+                            unset($_SESSION['Message']); 
+                            ?>
+                        </p>
+                    <?php }?>    
+                    <p class="help-block text-danger">
+                    <?php if(isset($_SESSION['errorMessage'])){ 
+                        echo $_SESSION['errorMessage'];
+                        unset($_SESSION['errorMessage']);
+                    }
+                    ?>
+                    </p>
                     <form  method="POST" action="login">
 
                         <div class="control-group">
@@ -53,9 +56,12 @@ include_once '../partials/shop-header.php';
 
                         <button type="submit" class="btn btn-primary py-2 px-4" name="login">Login</button>
                     </form>
+                    
             </div>
-
-
+            <div class="col-lg-7 mb-5">
+            <a href="signup" class="">Sign up</a>
+            </div>
+            
         </div>
     </div>
     <!-- Login End -->

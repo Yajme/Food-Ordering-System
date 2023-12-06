@@ -12,9 +12,11 @@ try{
             $_SESSION['product'] = $product;
         }
     }else{
-        $product = $_SESSION['product'];
+        
         if(!isset($_COOKIE['customerid'])){
             echo '<script>alert("Please login first")</script>';
+            $_SESSION['Message'] = 'Login first to purchase products!';
+            header('location: login.php');
         }else{
             $cart = array(
                 'productid'=> $product['ID'],

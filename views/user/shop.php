@@ -5,7 +5,8 @@ try{
     $categories = $customer->Products('loadCategories');
     if(!isset($_GET['product'])){
         if(isset($_GET['category'])){
-            $products = $customer->Products('selectProductByCategory',array($_GET['category'])); 
+
+            $products = $customer->Products('selectProductByCategory',$_GET['category']); 
         }else if(isset($_GET['price'])){
             $products = $customer->filterbyPrice($_GET['min'],$_GET['max']);
         }else{

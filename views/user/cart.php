@@ -6,7 +6,7 @@ try{
     if(!isset($_POST['product_id'])){
         //$customer->Cart('deleteCart',$_POST['delete']);
         
-        $Cart = $customer->Cart('viewCart',$_COOKIE['customerid']);
+        $Cart = (isset($_COOKIE['customerid'])) ? $customer->Cart('viewCart',$_COOKIE['customerid']) : NULL;
     }else{
         $data = array(
             'productid' => $_POST['product_id'],
@@ -14,7 +14,7 @@ try{
         );
         $deletCart = $customer->Cart('deleteCart',$data);
         $Cart = $customer->Cart('viewCart',$_COOKIE['customerid']);
-        echo 'Product Deleted';
+        
     }
 }catch(Exception $e){
     $_SESSION['error'] = $e->getMessage();
@@ -50,11 +50,14 @@ try{
                         </tr>
                     </thead>
                     <tbody class="align-middle">
-                        <!---->
-                        <?php foreach($Cart as $product): ?>
+                        <!--Cart Item start-->
+                        <?php 
+                        if($Cart){
+                        foreach($Cart as $product): ?>
                         <tr>
                             <td class="align-middle"><img src="img/product-1.jpg" alt="" style="width: 50px;"> <?php echo $product['product_name']?></td>
-                            <td class="align-middle"><?php echo '₱'.$product['price']?></td>
+                            
+                            <td class="align-middle"> <?php echo '₱'.$product['price']?></td>
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
                                     <div class="input-group-btn">
@@ -62,7 +65,7 @@ try{
                                         <i class="fa fa-minus"></i>
                                         </button>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="<?php echo $product['quantity']?>">
+                                    <input type="text" id="itemQuantity" class="form-control form-control-sm bg-secondary border-0 text-center" value="<?php echo $product['quantity']?>">
                                     <div class="input-group-btn">
                                         <button class="btn btn-sm btn-primary btn-plus">
                                             <i class="fa fa-plus"></i>
@@ -72,14 +75,17 @@ try{
                             </td>
                             <td class="align-middle"><?php echo '₱'.$product['cart_total']?></td>
                             <form method="POST">
-                                <input type="hidden" name="product_id" value="<?php echo $product['product_id']?>">
+                                <input type="hidden" name="product_id" id="productid" value="<?php echo $product['product_id']?>">
                             <td class="align-middle"><button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
                             </form>
-                            
                         </tr>
                         <?php $Total += $product['cart_total']; ?> 
-                        <?php endforeach; ?>
-                        <!---->
+                        <?php endforeach; }else{?>
+                            <div class="bg-light p-30 mb-5">
+                            <h6 class="font-weight-medium"><?php echo 'Login to see cart' ?></h6>
+                            </div>
+                        <?php }?>
+                        <!--Cart Item End-->
                     </tbody>
                 </table>
             </div>
@@ -107,15 +113,18 @@ try{
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5><?php echo '₱'.$Total+$Shipping; ?></h5>
+                            <h5 id="CartTotal" ><?php echo '₱'.$Total+$Shipping; ?></h5>
                         </div>
-                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
+                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3" >Proceed To Checkout</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Cart End -->
-
+    <script> 
+    //document.querySelectorAll('input[name="product_id"]')[i].value;
+    //document.querySelectorAll('#itemQuantity')[i].value
+    </script>
 
    <?php include_once '../partials/shop-footer.php'; ?>
