@@ -20,13 +20,13 @@ include_once '../partials/shop-header.php';
 ?>
     <!-- Login Start -->
     <div class="container-fluid">
-        <div class="row px-xl-5"> 
-            <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">Login</h2>
+        <div class="row px-xl-5 mx-auto"> 
+            <h2 class="section-title position-relative text-uppercase mx-auto mb-4">Login</h2>
         </div>
 
         <div class="row px-xl-5">
-
-            <div class="col-lg-7 mb-5">
+            <!--how do i center from this -->
+            <div class="col-lg-7 mb-5 mx-auto">
                     <?php if(isset($_SESSION['Message'])){?>
                         <p class="help-block text-success">
                             <?php echo $_SESSION['Message'];
@@ -52,6 +52,7 @@ include_once '../partials/shop-header.php';
                         <div class="control-group">
                             <input type="password" class="form-control" name="password" placeholder="Password"/>
                             <p class="help-block text-danger"></p>
+                            <a href="signup" class="float-right">Sign up</a>
                         </div>
 
                         <button type="submit" class="btn btn-primary py-2 px-4" name="login">Login</button>
@@ -59,9 +60,9 @@ include_once '../partials/shop-header.php';
                     
             </div>
             <div class="col-lg-7 mb-5">
-            <a href="signup" class="">Sign up</a>
-            </div>
             
+            </div>
+            <!--to this -->
         </div>
     </div>
     <!-- Login End -->
