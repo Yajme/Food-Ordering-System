@@ -5,7 +5,33 @@ include_once '../../utils/location.php';
 //https://psgc.gitlab.io/api/provinces/041000000/municipalities.json 
 
 if(isset($_POST['signup'])){
+    /**
+     * This code block handles the signup process for a user.
+     * It retrieves the necessary data from the $_POST array and validates the password.
+     * If the password matches, it creates a new CustomerController object and calls the Signup method,
+     * followed by the Login method to log in the user.
+     * Finally, it redirects the user to the index.php page.
+     * If any exception occurs during the process, it stores the error message in the $_SESSION['errorMessage'] variable.
+     */
     try{
+        /**
+         * This code snippet is responsible for creating an associative array called $data.
+         * The array contains various user input values retrieved from the $_POST superglobal array.
+         * The array keys represent the field names, while the corresponding values are obtained from the user input.
+         * The array elements include:
+         * - 'firstname': The user's first name.
+         * - 'lastname': The user's last name.
+         * - 'buildingNumber': The user's building number.
+         * - 'streetNumber': The user's street number.
+         * - 'barangay': The user's barangay (obtained using the Location class).
+         * - 'municipality': The user's municipality (obtained using the Location class).
+         * - 'postalCode': The user's postal code.
+         * - 'phone': The user's phone number.
+         * - 'email': The user's email address.
+         * - 'username': The user's username.
+         * - 'basePassword': The user's base password.
+         * - 'comparePassword': The user's password for comparison.
+         */
         $data = array(
             'firstname' => $_POST['firstname'],
             'lastname' => $_POST['lastname'],
@@ -26,15 +52,13 @@ if(isset($_POST['signup'])){
         $Controller = new CustomerController();
         $Controller->Signup($data);
         $Controller->Login($data['username'],$data['basePassword']);
+        header('location: index.php');
     }catch(Exception $e){
-        $_SESSION['errorMessage'] = $e->getTraceAsString();
+        $_SESSION['errorMessage'] = $e->getMessage();
     }
 }
 ?>
-<div class="container-fluid">
-
-                
-                    
+<div class="container-fluid">         
         <div class="row px-xl-5 mx-auto"> 
             <h2 class="section-title position-relative text-uppercase mx-auto mb-4">signup</h2>
         </div>
@@ -175,43 +199,55 @@ if(isset($_POST['signup'])){
             
             </div>
             <script>
+                /**
+                 * This function is executed when the window loads. It fetches data from an API
+                 * to populate the "municipality" select element with options. It also adds an event listener
+                 * to the "municipality" select element, so that when its value changes, it fetches data
+                 * from another API to populate the "barangay" select element with options.
+                 */
                 window.onload = function() {
 
-                const url = 'https://psgc.gitlab.io/api/provinces/041000000/cities-municipalities.json';
-                fetch(url) 
-                    .then(response => response.json())
-                    .then(data =>{
-                        const select = document.getElementById("municipality");
+                    const url = 'https://psgc.gitlab.io/api/provinces/041000000/cities-municipalities.json';
+                    fetch(url) 
+                        .then(response => response.json())
+                        .then(data =>{
+                            const select = document.getElementById("municipality");
 
-                        data.forEach(item => {
-                            const option = document.createElement("option");
-                            option.value = item.code;
-                            option.text = item.name;
-                            select.appendChild(option);
-                        });
+                            data.forEach(item => {
+                                const option = document.createElement("option");
+                                option.value = item.code;
+                                option.text = item.name;
+                                select.appendChild(option);
+                            });
 
-                        select.addEventListener("change",()=>{
-                            const url = `https://psgc.gitlab.io/api//cities-municipalities/${select.value}/barangays.json`;
-                            fetch(url) 
-                            .then(response => response.json())
-                            .then(data =>{
-                                const select = document.getElementById("barangay");
-                                select.innerHTML = "";
-                                data.forEach(item => {
-                                    const option = document.createElement("option");
-                                    option.value = item.code;
-                                    option.text = item.name;
-                                    select.appendChild(option);
-                                });
+                            select.addEventListener("change",()=>{
+                                const url = `https://psgc.gitlab.io/api//cities-municipalities/${select.value}/barangays.json`;
+                                fetch(url) 
+                                .then(response => response.json())
+                                .then(data =>{
+                                    const select = document.getElementById("barangay");
+                                    select.innerHTML = "";
+                                    data.forEach(item => {
+                                        const option = document.createElement("option");
+                                        option.value = item.code;
+                                        option.text = item.name;
+                                        select.appendChild(option);
+                                    });
+                                })
+                                .catch(error => console.log(error));
+                            
                             })
-                            .catch(error => console.log(error));
-                        
                         })
-                    })
-                    .catch(error => console.log(error));
-                    
+                        .catch(error => console.log(error));
+                        
                 }
-                function togglePassword(btn,inputName) {
+                /**
+                 * Toggles the visibility of a password input field.
+                 *
+                 * @param {Element} btn - The button element that triggers the toggle.
+                 * @param {string} inputName - The name attribute of the password input field.
+                 */
+                function togglePassword(btn, inputName) {
                     console.log(btn);
                     var password = document.querySelector(`input[name=${inputName}]`);
                     var type = password.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -219,16 +255,17 @@ if(isset($_POST['signup'])){
                     btn.textContent = type === 'password' ? 'Show' : 'Hide';
                 }
 
-                const btnBase =  document.querySelector('button[name="btnBase"]');
-                const btnCompare =  document.querySelector('button[name="btnCompare"]');
+                const btnBase = document.querySelector('button[name="btnBase"]');
+                const btnCompare = document.querySelector('button[name="btnCompare"]');
 
                 btnBase.addEventListener('click', function() {
-                    togglePassword(btnBase,'basePassword');
+                    togglePassword(btnBase, 'basePassword');
                 });
 
                 btnCompare.addEventListener('click', function() {
-                    togglePassword(btnCompare,'comparePassword');
+                    togglePassword(btnCompare, 'comparePassword');
                 });
+
                 const input = document.querySelector('input[name="username"]');
                 input.addEventListener('input', function() {
                     console.log(input.value);
