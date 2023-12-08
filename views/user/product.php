@@ -1,23 +1,56 @@
 <?php include_once '../partials/shop-header.php';
 
+/**
+ * This code is responsible for handling the product page functionality.
+ * It checks if the user is adding a product to the cart or accessing the product page directly.
+ * If the user is accessing the product page directly, it retrieves the product details from the database.
+ * If the user is adding a product to the cart, it checks if the user is logged in and adds the product to the cart.
+ * If any exception occurs during the process, it captures the error message and stores it in the session.
+ */
 try{
     $customer = new CustomerController();
+    /**
+     * This code block checks if the 'add-cart' POST parameter is not set.
+     * If it is not set, it further checks if the 'name' GET parameter is not set.
+     * If the 'name' GET parameter is not set, it redirects the user to the 'shop' page.
+     * If the 'name' GET parameter is set, it retrieves the product details based on the 'name' parameter,
+     * assigns the first product to the $product variable, and stores it in the $_SESSION['product'] variable.
+     * 
+     * If the 'add-cart' POST parameter is set, the code block does not execute any further actions.
+     */
     if(!isset($_POST['add-cart'])){
         if(!isset($_GET['name'])){
             header('location: shop');
         }else{
+            /**
+             * Sets the product session variable to null, then retrieves a product from the customer object based on the provided name parameter.
+             * The retrieved product is stored in the product session variable.
+             *
+             * @param string $name The name of the product to search for.
+             * @return array of data of the product.
+             */
             $_SESSION['product'] = null;
             $product = $customer->selectProductBySearch($_GET['name']);
             $product = $product[0];
             $_SESSION['product'] = $product;
         }
     }else{
-        
+           
+        /**
+         * Checks if the 'customerid' cookie is set. If not, sets a session message and redirects to the login page.
+         * 
+         * @return void
+         */
         if(!isset($_COOKIE['customerid'])){
-            echo '<script>alert("Please login first")</script>';
             $_SESSION['Message'] = 'Login first to purchase products!';
             header('location: login.php');
         }else{
+            /**
+             * Adds a product to the cart.
+             *
+             * @param array $cart The cart details including product ID, quantity, and customer ID.
+             * @return void
+             */
             $cart = array(
                 'productid'=> $product['ID'],
                 'quantity'=> $_POST['quantityForm'],
@@ -25,11 +58,6 @@ try{
             );
             $customer->Cart('addToCart',array($cart));
         }
-        
-        
-        //$customer->Cart('addToCart',array($cart));
-        
-        //unset($_SESSION['product']);
     }
 }catch(Exception $e){
     $_SESSION['error'] = $e->getMessage();
