@@ -157,6 +157,32 @@ class UserModel extends Database{
             throw $e;
         }
     }
+
+    public function getAddress($params){
+        try{
+
+            $customerid = $this->escape_string($params);
+            $query = "SELECT * FROM view_customer_address WHERE ID ='$customerid'";
+            $rows = $this->read($query);
+            if(!$rows) throw new Exception("Unable to get address");
+            return $rows;
+        }catch(Exception $e){
+            $this->connection->rollback();
+            throw $e;
+        }
+    }
+
+    public function viewPaymentMethod(){
+        try{
+            $query = "SELECT * FROM tbl_payment_method";
+            $rows = $this->read($query);
+            if(!$rows) throw new Exception("Unable to get payment method");
+            return $rows;
+        }catch(Exception $e){
+            $this->connection->rollback();
+            throw $e;
+        }
+    }
 }
 
 ?>

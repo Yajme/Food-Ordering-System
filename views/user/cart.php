@@ -25,8 +25,8 @@ try{
         <div class="row px-xl-5">
             <div class="col-12">
                 <nav class="breadcrumb bg-light mb-30">
-                    <a class="breadcrumb-item text-dark" href="#">Home</a>
-                    <a class="breadcrumb-item text-dark" href="#">Shop</a>
+                    <a class="breadcrumb-item text-dark" href="index">Home</a>
+                    <a class="breadcrumb-item text-dark" href="shop">Shop</a>
                     <span class="breadcrumb-item active">Shopping Cart</span>
                 </nav>
             </div>
@@ -115,7 +115,7 @@ try{
                             <h5>Total</h5>
                             <h5 id="CartTotal" ><?php echo '₱'.$Total+$Shipping; ?></h5>
                         </div>
-                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3" >Proceed To Checkout</button>
+                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3" onclick="window.location.assign('checkout');">Proceed To Checkout</button>
                     </div>
                 </div>
             </div>
@@ -123,8 +123,6 @@ try{
     </div>
     <!-- Cart End -->
     <script> 
-    //document.querySelectorAll('input[name="product_id"]')[i].value;
-    //document.querySelectorAll('#itemQuantity')[i].value
     </script>
 
    <?php include_once '../partials/shop-footer.php'; ?>

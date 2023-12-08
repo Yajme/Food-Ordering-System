@@ -51,12 +51,14 @@ try{
              * @param array $cart The cart details including product ID, quantity, and customer ID.
              * @return void
              */
+            $product = $_SESSION['product'];
             $cart = array(
                 'productid'=> $product['ID'],
                 'quantity'=> $_POST['quantityForm'],
                 'customerid'=>$_COOKIE['customerid']
             );
             $customer->Cart('addToCart',array($cart));
+            $_SESSION['message'] = 'Product added to cart!';
         }
     }
 }catch(Exception $e){
@@ -68,6 +70,13 @@ try{
 
     <!-- Breadcrumb Start -->
     <div class="container-fluid">
+        <?php if(isset($_SESSION['message'])) { ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo $_SESSION['message']; 
+                unset($_SESSION['message']);
+                ?>
+            </div>
+            <?php } ?>
         <div class="row px-xl-5">
             <div class="col-12">
                 <nav class="breadcrumb bg-light mb-30">
@@ -79,7 +88,6 @@ try{
         </div>
     </div>
     <!-- Breadcrumb End -->
-
 
     <!-- Shop Detail Start -->
     <div class="container-fluid pb-5">
