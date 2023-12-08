@@ -51,10 +51,10 @@ include_once '../partials/shop-header.php';
 
                         <div class="control-group">
                             <input type="password" class="form-control" name="password" placeholder="Password"/>
-                            <p class="help-block text-danger"></p>
-                            <a href="signup" class="float-right">Sign up</a>
+                            <p class="float-right">Don't have account?<a href="signup">Sign up</a></p>
+                            
                         </div>
-
+                        <br>
                         <button type="submit" class="btn btn-primary py-2 px-4" name="login">Login</button>
                     </form>
                     

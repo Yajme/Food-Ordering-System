@@ -67,6 +67,14 @@ class CustomerController extends BaseCustomer {
         }
     }
     
+
+    public function Signup($data){
+        try{
+            $this->user->signupUser($data);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     /**
      * List of Functions for loading categories and products
      * 1. LoadCategories()
