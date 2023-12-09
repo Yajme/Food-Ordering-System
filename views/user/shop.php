@@ -1,19 +1,57 @@
 <?php include_once '../partials/shop-header.php';
-
+/**
+ * This script is responsible for loading products based on different criteria.
+ * It uses the CustomerController class to interact with the product data.
+ */
 try{
     $customer = new CustomerController();
     $categories = $customer->Products('loadCategories');
+    /**
+     * This code block checks the query parameters and retrieves the appropriate products based on the conditions.
+     * If the 'product' parameter is not set, it checks for 'category' and 'price' parameters to filter the products accordingly.
+     * If the 'category' parameter is set, it retrieves products based on the specified category.
+     * If the 'price' parameter is set, it filters the products based on the specified price range.
+     * If none of the above parameters are set, it retrieves all products.
+     * If the 'product' parameter is set, the code block is skipped.
+     */
     if(!isset($_GET['product'])){
         if(isset($_GET['category'])){
-            $products = $customer->Products('selectProductByCategory',array($_GET['category'])); 
+            /**
+             * Retrieves products based on the selected category.
+             *
+             * @param string $category The selected category.
+             * @return array The array of products.
+             */
+            $products = $customer->Products('selectProductByCategory', $_GET['category']);
         }else if(isset($_GET['price'])){
-            $products = $customer->filterbyPrice($_GET['min'],$_GET['max']);
+            /**
+             * Filters the products by price range.
+             *
+             * @param int $min The minimum price.
+             * @param int $max The maximum price.
+             * @return array The filtered products.
+             */
+            $products = $customer->filterbyPrice($_GET['min'], $_GET['max']);
+
         }else{
             if(!isset($_SESSION['error']) ){
+                /**
+                 * Selects all products from the customer's database.
+                 *
+                 * @param string $customer The customer object.
+                 * @return array The array of selected products.
+                 */
                 $products = $customer->Products('selectAllProducts');
             }
         }
     }else{
+        /**
+         * Retrieves products based on a search query.
+         *
+         * @param string $searchQuery The search query for filtering products.
+         * @return array An array of products matching the search query.
+         */
+        $products = $customer->Products('selectProductBySearch', $_GET['product']);
         $products = $customer->Products('selectProductBySearch',$_GET['product']);
     }
 }catch(Exception $e){
@@ -29,8 +67,7 @@ try{
         <div class="row px-xl-5">
             <div class="col-12">
                 <nav class="breadcrumb bg-light mb-30">
-                    <a class="breadcrumb-item text-dark" href="#">Home</a>
-                    <a class="breadcrumb-item text-dark" href="#">Shop</a>
+                    <a class="breadcrumb-item text-dark" href="index">Home</a>
                     <span class="breadcrumb-item active">Shop List</span>
                 </nav>
             </div>

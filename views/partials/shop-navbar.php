@@ -1,7 +1,12 @@
 <?php 
 try{
     $customer = new CustomerController();
-    $CartCount =  $customer->Cart('countCart',$_COOKIE['customerid']);
+    $cart = array(
+        0 => array(
+            'CartCount' => 0
+        )
+    );
+    $CartCount = (isset($_COOKIE['customerid'])) ? $customer->Cart('countCart',$_COOKIE['customerid']) : $cart;
     
 }catch(Exception $e){
     throw $e;
