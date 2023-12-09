@@ -270,16 +270,6 @@ if(isset($_POST['signup'])){
                 input.addEventListener('input', function() {
                     console.log(input.value);
                 });
-
-                    //document.querySelector('input[name="basePassword"]').addEventListener('click', togglePassword);
-                    //document.querySelector('input[name="comparePassword"]').addEventListener('click', togglePassword);
-                           /*
-                document.querySelector('#togglePassword').addEventListener('click', function(){
-                    var password = document.querySelector('#password');
-                    var type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                    password.setAttribute('type', type);
-                    this.textContent = type === 'password' ? 'Show' : 'Hide';
-                }); */
             </script>
             <!--to this -->
         </div>

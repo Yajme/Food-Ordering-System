@@ -1,13 +1,30 @@
 <?php include_once '../partials/shop-header.php';
 try{
+    
+    
 if(!isset($_SESSION['user_name'])) header('location: index.php');
 
+/**
+ * Process the form submission for checkout.
+ *
+ * @param array $_POST The form data submitted.
+ * @return void
+ */
 if(isset($_POST['submit'])){
-$data = array(
-    'customerid' => $_COOKIE['customerid'],
-    'payment' => $_POST['payment']
-);
-var_dump($data);
+    if(!isset($_POST['payment'])) throw new Exception("Please select a payment method");
+    $Controller = new CustomerController();
+    $Customerid = $_COOKIE['customerid'];
+    $data = array(
+        'customerid' => $Customerid,
+        'payment' => $_POST['payment'],
+        'address' =>$Controller->Cart('getAddress',$Customerid),
+        'cart'=>$Controller->Cart('viewCart',$Customerid),
+        'total'=> $_SESSION['total']
+    );
+    $Controller->Cart('checkout',$data);
+    
+    $_SESSION['message'] = "Order Placed Successfully";
+     echo "<script>window.location.href='index';</script>";
 }
 /**
  * This script handles the checkout process for a user.
@@ -16,6 +33,34 @@ var_dump($data);
  */
 
 if(isset($_GET)){
+    
+    $Controller = new CustomerController();
+    $count = $Controller->Cart('countCart',$_COOKIE['customerid']);
+    
+    if($count[0]['CartCount']>0){
+        $data = loadOrderDetails();
+        $address = $data['address'];
+        $payment = $data['payment'];
+        $cart = $data['cart'];
+    }else{
+        header('location: index');
+        exit();
+    }
+    
+    
+
+}
+}catch(Exception $e){
+    try{
+        $_SESSION['errorMessage'] = $e->getMessage();
+    }catch(Exception $e){
+        $_SESSION['errorMessage'] = $e->getMessage();
+    }
+    
+}
+
+ function loadOrderDetails(){
+    
     if(!isset($_COOKIE['customerid'])){
         $_SESSION['message'] = "Please login to continue";
         header('location: index.php');
@@ -25,9 +70,14 @@ if(isset($_GET)){
     $address = $Controller->Cart('getAddress',$Customerid);
     $cart = $Controller->Cart('viewCart',$Customerid);
     $payment = $Controller->Cart('viewPaymentMethod');
-}
-}catch(Exception $e){
-    echo $e->getTraceAsString();
+    if(!$cart) header('location: index');  
+    $data = array(
+        'customerid' => $Customerid,
+        'address' =>$Controller->Cart('getAddress',$Customerid),
+        'cart'=>$cart,
+        'payment' => $Controller->Cart('viewPaymentMethod')
+    );
+    return $data;
 }
 ?>
 
@@ -47,8 +97,20 @@ if(isset($_GET)){
 
 
     <!-- Checkout Start -->
-    <form action="checkout" method="post">
+    <form action="checkout" method="post" name="form">
     <div class="container-fluid">
+        <?php if(isset($_SESSION['message'])){?>
+            <div class="alert alert-success" role="alert">
+            <?php echo $_SESSION['message']; 
+            unset($_SESSION['message']);?>
+            </div>
+        <?php }?>
+        <?php if(isset($_SESSION['errorMessage'])){?>
+            <div class="alert alert-danger" role="alert">
+            <?php echo $_SESSION['errorMessage']; 
+            unset($_SESSION['errorMessage']);?>
+            </div>
+        <?php }?>
         <div class="row px-xl-5">
             <div class="col-lg-8">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
@@ -56,105 +118,48 @@ if(isset($_GET)){
                     <div class="row">
                         <div class="col-md-6 form-group">
                             <label>First Name</label>
-                            <input class="form-control" type="text" placeholder="First Name" value="<?php echo $address[0]['firstname'];?>">
+                            <input class="form-control" type="text" placeholder="First Name" value="<?php echo $address[0]['firstname'];?>" required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Last Name</label>
-                            <input class="form-control" type="text" placeholder="Last Name" value="<?php echo $address[0]['lastname'];?>">
+                            <input class="form-control" type="text" placeholder="Last Name" value="<?php echo $address[0]['lastname'];?>" required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label>E-mail</label>
-                            <input class="form-control" type="text" placeholder="Email" value="<?php echo $address[0]['email'];?>">
+                            <input class="form-control" type="text" placeholder="Email" value="<?php echo $address[0]['email'];?>" required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Mobile No</label>
-                            <input class="form-control" type="text" placeholder="Phone" value="<?php echo $address[0]['phone'];?>">
+                            <input class="form-control" type="text" placeholder="Phone" value="<?php echo $address[0]['phone'];?>" required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Address Line 1</label>
-                            <input class="form-control" type="text" placeholder="Street" value="<?php echo $address[0]['street_number'];?>">
+                            <input class="form-control" type="text" placeholder="Street" value="<?php echo $address[0]['street_number'];?>" required>
                         </div>
                         <div class="col-md-6 form-group">
-                            <label>Address Line 2</label>
+                            <label>Address Line 2 (Optional)</label>
                             <input class="form-control" type="text" placeholder="Building/House Number" value="<?php echo $address[0]['building_no'];?>">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Barangay</label>
-                            <select class="custom-select">
+                            <select class="custom-select" name="barangay" required>
                                 <option selected><?php echo $address[0]['barangay'];?></option>
-                                <option>Afghanistan</option>
-                                <option>Albania</option>
-                                <option>Algeria</option>
                             </select>
                         </div>
                         <div class="col-md-6 form-group">
                             <label>City</label>
-                            <input class="form-control" type="text" placeholder="New York" value="<?php echo $address[0]['municipality'];?>">
+                            <input class="form-control" type="text" placeholder="New York" value="<?php echo $address[0]['municipality'];?>" required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Postal Code</label>
-                            <input class="form-control" type="text" placeholder="Postal Code" value="<?php echo $address[0]['postal_code'];?>">
+                            <input class="form-control" type="text" placeholder="Postal Code" value="<?php echo $address[0]['postal_code'];?>" required>
                         </div>
                         <div class="col-md-12">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="shipto">
-                                <label class="custom-control-label" for="shipto"  data-toggle="collapse" data-target="#shipping-address">Ship to different address</label>
-                            </div>
+                           
                         </div>
                     </div>
                 </div>
-                <div class="collapse mb-5" id="shipping-address">
-                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Shipping Address</span></h5>
-                    <div class="bg-light p-30">
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>First Name</label>
-                                <input class="form-control" type="text" placeholder="John">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Last Name</label>
-                                <input class="form-control" type="text" placeholder="Doe">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>E-mail</label>
-                                <input class="form-control" type="text" placeholder="example@email.com">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Mobile No</label>
-                                <input class="form-control" type="text" placeholder="+123 456 789">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Address Line 1</label>
-                                <input class="form-control" type="text" placeholder="123 Street">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Address Line 2</label>
-                                <input class="form-control" type="text" placeholder="123 Street">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Country</label>
-                                <select class="custom-select">
-                                    <option selected>United States</option>
-                                    <option>Afghanistan</option>
-                                    <option>Albania</option>
-                                    <option>Algeria</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>City</label>
-                                <input class="form-control" type="text" placeholder="New York">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>State</label>
-                                <input class="form-control" type="text" placeholder="New York">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>ZIP Code</label>
-                                <input class="form-control" type="text" placeholder="123">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
             <div class="col-lg-4">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Order Total</span></h5>
@@ -162,24 +167,29 @@ if(isset($_GET)){
                     <div class="border-bottom">
                         <h6 class="mb-3">Products</h6>
                         <!-- Product List --> 
+                        <?php if($cart){ ?>
                         <?php $total = 0; foreach($cart as $item):?>
                         <div class="d-flex justify-content-between">
                             <p><?php echo $item['product_name'] ?></p>
-                            <p><?php echo '₱'.$item['price'] ?></p>
+                            <p><?php echo '₱'.$item['cart_total'] ?></p>
                         </div>
-                        <?php $total += $item['price'] ?>
+                        <?php $total += $item['cart_total'] ?>
                         <?php endforeach;?>
+                        <?php }else {?>
                         <!-- Product List -->
-                        
+                        <div class="d-flex justify-content-between">
+                            <p>No Items in Cart</p>
+                        </div>
+                        <?php } ?>
                     </div>
                     <div class="border-bottom pt-3 pb-2">
                         <div class="d-flex justify-content-between mb-3">
                             <h6>Subtotal</h6>
-                            <h6><?php echo '₱'.$total ?></h6>
+                            <h6><?php echo '₱'.$total; $_SESSION['total'] = $total; ?></h6>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium"><?php echo '₱'.$shipping=10; ?></h6>
+                            <h6 class="font-weight-medium"><?php echo '₱'.$shipping=100; ?></h6>
                         </div>
                     </div>
                     <div class="pt-2">
@@ -195,7 +205,7 @@ if(isset($_GET)){
                         <?php foreach($payment as $method):?>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="<?php echo $method['payment_name']?>">
+                                <input type="radio" class="custom-control-input" name="payment" id="<?php echo $method['payment_name']?>" value="<?php echo $method['payment_name']?>">
                                 <label class="custom-control-label" for="<?php echo $method['payment_name']?>"><?php echo $method['payment_name']?></label>
                             </div>
                         </div>
@@ -211,6 +221,8 @@ if(isset($_GET)){
     </form>
     <!-- Checkout End -->
             <script>
-
-            </script>
+        
+    
+</script>
+            
 <?php include_once '../partials/shop-footer.php';?>

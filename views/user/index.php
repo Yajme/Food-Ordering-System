@@ -13,6 +13,9 @@ try{
     
     <!-- Carousel Start -->
     <div class="container-fluid mb-3">
+        <?php if(isset($_SESSION['message'])) {?>
+            <div class="alert alert-success"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></div>
+        <?php } ?>
         <div class="row px-xl-5">
             <div class="col">
                 <div id="header-carousel" class="carousel slide carousel-fade mb-30 mb-lg-0" data-ride="carousel">
@@ -146,7 +149,7 @@ try{
                     </div>
                     <div class="text-center py-4">
                         <!--Product Name-->
-                        <a class="h6 text-decoration-none text-truncate" href=""><?php echo $featuredProduct['ProductName']; ?> </a>
+                        <a class="h6 text-decoration-none text-truncate" href="product?name=<?php echo $featuredProduct['ProductName']; ?>"><?php echo $featuredProduct['ProductName']; ?> </a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
                             <!--Price-->
                             <h5><?php echo '₱'.$featuredProduct['Price']; ?> </h5><h6 class="text-muted ml-2"></h6>
@@ -177,7 +180,7 @@ try{
                     </div>
                     <div class="text-center py-4">
                         <!--Product Name-->
-                        <a class="h6 text-decoration-none text-truncate" href=""><?php echo $recentProduct['Product Name']; ?> </a>
+                        <a class="h6 text-decoration-none text-truncate" href="product?name=<?php echo $featuredProduct['ProductName']; ?>"><?php echo $recentProduct['Product Name']; ?> </a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
                             <!--Price-->
                             <h5><?php echo '₱'.$recentProduct['Price']; ?> </h5><h6 class="text-muted ml-2"></h6>

@@ -21,6 +21,7 @@ if(!isset($_COOKIE['customerid'])){
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a href="order" class="dropdown-item">Orders</a>
+                                <a href="address" class="dropdown-item">Address</a>
                                 <button type="submit" class="dropdown-item" name="logout">Logout</button>
                                 
                             </div>

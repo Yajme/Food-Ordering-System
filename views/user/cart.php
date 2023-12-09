@@ -17,7 +17,8 @@ try{
         
     }
 }catch(Exception $e){
-    $_SESSION['error'] = $e->getMessage();
+    $Cart = NULL;
+    $_SESSION['errorCart'] = $e->getMessage();
 }
 ?>
     <!-- Breadcrumb Start -->
@@ -37,6 +38,8 @@ try{
 
     <!-- Cart Start -->
     <div class="container-fluid">
+        <?php if(isset($_SESSION['errorCart']) && isset($_COOKIE['customerid'])){ ?>
+            <?php echo '<div class="alert alert-danger">'.$_SESSION['errorCart'].'</div>';  unset($_SESSION['errorCart']);}?>
         <div class="row px-xl-5">
             <div class="col-lg-8 table-responsive mb-5">
                 <table class="table table-light table-borderless table-hover text-center mb-0">
@@ -60,17 +63,9 @@ try{
                             <td class="align-middle"> <?php echo '₱'.$product['price']?></td>
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" id="itemQuantity" class="form-control form-control-sm bg-secondary border-0 text-center" value="<?php echo $product['quantity']?>">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
+                                    
+                                    <input type="text" id="itemQuantity" class="form-control form-control-sm bg-secondary border-0 text-center" value="<?php echo $product['quantity']?>" readonly>
+                                    
                                 </div>
                             </td>
                             <td class="align-middle"><?php echo '₱'.$product['cart_total']?></td>
@@ -80,7 +75,7 @@ try{
                             </form>
                         </tr>
                         <?php $Total += $product['cart_total']; ?> 
-                        <?php endforeach; }else{?>
+                        <?php endforeach; }else if(!isset($_COOKIE['customerid'])){?>
                             <div class="bg-light p-30 mb-5">
                             <h6 class="font-weight-medium"><?php echo 'Login to see cart' ?></h6>
                             </div>
@@ -107,7 +102,7 @@ try{
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium"><?php echo '₱'.$Shipping=100; ?></h6>
+                            <h6 class="font-weight-medium"><?php echo '₱'.$Shipping=  ($Total>0) ? 100 : 0;?></h6>
                         </div>
                     </div>
                     <div class="pt-2">
@@ -115,7 +110,7 @@ try{
                             <h5>Total</h5>
                             <h5 id="CartTotal" ><?php echo '₱'.$Total+$Shipping; ?></h5>
                         </div>
-                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3" onclick="window.location.assign('checkout');">Proceed To Checkout</button>
+                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3" onclick="window.location.assign('checkout');" <?php if(!$Cart) {echo 'disabled';}    ?> >Proceed To Checkout</button>
                     </div>
                 </div>
             </div>
