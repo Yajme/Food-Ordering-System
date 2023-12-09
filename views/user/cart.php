@@ -6,7 +6,7 @@ try{
     if(!isset($_POST['product_id'])){
         //$customer->Cart('deleteCart',$_POST['delete']);
         
-        $Cart = $customer->Cart('viewCart',$_COOKIE['customerid']);
+        $Cart = (isset($_COOKIE['customerid'])) ? $customer->Cart('viewCart',$_COOKIE['customerid']) : NULL;
     }else{
         $data = array(
             'productid' => $_POST['product_id'],
@@ -14,10 +14,11 @@ try{
         );
         $deletCart = $customer->Cart('deleteCart',$data);
         $Cart = $customer->Cart('viewCart',$_COOKIE['customerid']);
-        echo 'Product Deleted';
+        
     }
 }catch(Exception $e){
-    $_SESSION['error'] = $e->getMessage();
+    $Cart = NULL;
+    $_SESSION['errorCart'] = $e->getMessage();
 }
 ?>
     <!-- Breadcrumb Start -->
@@ -25,8 +26,8 @@ try{
         <div class="row px-xl-5">
             <div class="col-12">
                 <nav class="breadcrumb bg-light mb-30">
-                    <a class="breadcrumb-item text-dark" href="#">Home</a>
-                    <a class="breadcrumb-item text-dark" href="#">Shop</a>
+                    <a class="breadcrumb-item text-dark" href="index">Home</a>
+                    <a class="breadcrumb-item text-dark" href="shop">Shop</a>
                     <span class="breadcrumb-item active">Shopping Cart</span>
                 </nav>
             </div>
@@ -37,6 +38,8 @@ try{
 
     <!-- Cart Start -->
     <div class="container-fluid">
+        <?php if(isset($_SESSION['errorCart']) && isset($_COOKIE['customerid'])){ ?>
+            <?php echo '<div class="alert alert-danger">'.$_SESSION['errorCart'].'</div>';  unset($_SESSION['errorCart']);}?>
         <div class="row px-xl-5">
             <div class="col-lg-8 table-responsive mb-5">
                 <table class="table table-light table-borderless table-hover text-center mb-0">
@@ -50,36 +53,34 @@ try{
                         </tr>
                     </thead>
                     <tbody class="align-middle">
-                        <!---->
-                        <?php foreach($Cart as $product): ?>
+                        <!--Cart Item start-->
+                        <?php 
+                        if($Cart){
+                        foreach($Cart as $product): ?>
                         <tr>
                             <td class="align-middle"><img src="img/product-1.jpg" alt="" style="width: 50px;"> <?php echo $product['product_name']?></td>
-                            <td class="align-middle"><?php echo '₱'.$product['price']?></td>
+                            
+                            <td class="align-middle"> <?php echo '₱'.$product['price']?></td>
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="<?php echo $product['quantity']?>">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
+                                    
+                                    <input type="text" id="itemQuantity" class="form-control form-control-sm bg-secondary border-0 text-center" value="<?php echo $product['quantity']?>" readonly>
+                                    
                                 </div>
                             </td>
                             <td class="align-middle"><?php echo '₱'.$product['cart_total']?></td>
                             <form method="POST">
-                                <input type="hidden" name="product_id" value="<?php echo $product['product_id']?>">
+                                <input type="hidden" name="product_id" id="productid" value="<?php echo $product['product_id']?>">
                             <td class="align-middle"><button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
                             </form>
-                            
                         </tr>
                         <?php $Total += $product['cart_total']; ?> 
-                        <?php endforeach; ?>
-                        <!---->
+                        <?php endforeach; }else if(!isset($_COOKIE['customerid'])){?>
+                            <div class="bg-light p-30 mb-5">
+                            <h6 class="font-weight-medium"><?php echo 'Login to see cart' ?></h6>
+                            </div>
+                        <?php }?>
+                        <!--Cart Item End-->
                     </tbody>
                 </table>
             </div>
@@ -101,21 +102,22 @@ try{
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium"><?php echo '₱'.$Shipping=100; ?></h6>
+                            <h6 class="font-weight-medium"><?php echo '₱'.$Shipping=  ($Total>0) ? 100 : 0;?></h6>
                         </div>
                     </div>
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5><?php echo '₱'.$Total+$Shipping; ?></h5>
+                            <h5 id="CartTotal" ><?php echo '₱'.$Total+$Shipping; ?></h5>
                         </div>
-                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
+                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3" onclick="window.location.assign('checkout');" <?php if(!$Cart) {echo 'disabled';}    ?> >Proceed To Checkout</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Cart End -->
-
+    <script> 
+    </script>
 
    <?php include_once '../partials/shop-footer.php'; ?>

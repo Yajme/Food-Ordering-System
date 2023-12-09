@@ -4,11 +4,13 @@ require_once '../../model/usermodel.php';
 require_once '../../utils/userinterface.php';
 require_once '../../utils/authentication.php';
 require_once '../../model/productmodel.php';
-
+require_once '../../class/order.php';
 interface ICustomer{
     
     public function Products($Function, $params = array());
     public function Cart($Function, $params = array());
+    public function User($Function, $params = array());
+    public function Order($Function, $params = array());
 }
 abstract class BaseCustomer implements ICustomer, ILogin{
     
@@ -34,8 +36,25 @@ abstract class BaseCustomer implements ICustomer, ILogin{
             throw $e;
         }
     }
+    public function User($Function, $params = array())
+    {
+        try{
+            return  $this->initializeUserModel(new UserModel())->$Function($params);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function Order($Function, $params = array())
+    {
+        try{
+            return  $this->initializeOrderModel()->$Function($params);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     private function initializeProductModel(ProductModel $product){return $product;}
     private function initializeUserModel(UserModel $user){return $user;}
+    private function initializeOrderModel(){return new UserOrder(new UserOrderModel());}
 }
 class CustomerController extends BaseCustomer {
     protected $user;
@@ -67,6 +86,14 @@ class CustomerController extends BaseCustomer {
         }
     }
     
+
+    public function Signup($data){
+        try{
+            $this->user->signupUser($data);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     /**
      * List of Functions for loading categories and products
      * 1. LoadCategories()
