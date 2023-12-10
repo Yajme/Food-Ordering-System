@@ -83,6 +83,30 @@ class UserOrderModel extends OrderModel{
             throw $e;
         }
     }
+    public function orderDetail(){
+        try{
+            $query = "SELECT * FROM `orderview` ORDER BY order_id ASC";
+            $rows = $this->read($query);
+            if(!$rows) throw new Exception("Unable to get orders");
+            return $rows;
+            
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function orderDetails(){
+        try{
+            $query = "SELECT nw.product_id, nw.image_path, nw.product_name, nw.price, nw.quantity, ordetail.total_amount ,nw.customer_id, cust.firstname,cust.lastname ,nw.order_id, nw.order_status, nw.created_at 
+            FROM view_customer_order as nw inner join tbl_customer as cust on nw.customer_id = cust.customer_id
+            inner join tbl_order_details as ordetail on ordetail.order_id =  nw.order_id;";
+            $rows = $this->read($query);
+            if(!$rows) throw new Exception("Unable to get orders");
+            return $rows;
+            
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     
 }
 ?>
