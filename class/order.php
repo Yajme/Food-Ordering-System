@@ -92,6 +92,13 @@ class UserOrder extends Order{
         parent::__construct( $OrderModel);
     }
     
+    /**
+     * Method to prepare and display orders based on the given parameters.
+     *
+     * @param array $params The array of orders to be prepared.
+     * @return void
+     * @throws Exception If an error occurs while preparing the orders.
+     */
     public function preparingOrders($params){
         try{
             //var_dump($params);
@@ -146,6 +153,12 @@ class UserOrder extends Order{
         }
     }
 
+    /**
+     * This method displays shipping orders based on the given parameters.
+     *
+     * @param array $params The array of order IDs and their details.
+     * @return void
+     */
     public function shippingOrders($params){
         $count = 0;
         foreach($params as $orderid){
@@ -197,6 +210,12 @@ class UserOrder extends Order{
         }
     }
 
+    /**
+     * This method displays the delivered orders based on the given parameters.
+     *
+     * @param array $params The array of orders to be displayed.
+     * @return void
+     */
     public function deliveredOrders($params){
         $count = 0;
         foreach($params as $orderid){
@@ -261,6 +280,13 @@ class UserOrder extends Order{
             </div>';
         }
     }
+    /**
+     * This method displays the received orders based on the given parameters.
+     *
+     * @param array $params The array of orders to be displayed.
+     * @return void
+     */
+    
     public function receivedOrders($params){
         $count = 0;
         foreach($params as $orderid){
