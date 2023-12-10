@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="en">
+<?php
+    include_once('../../model/adminmodel.php');
+    $orders = new adminProduct();
+    $orderView = $orders->loadOrders();
+    $customerOrder= $orders->customerOrders();
 
+?>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -79,12 +85,13 @@
                     <th scope="col">Customer Name</th>
                     <th scope="col">Total</th>
                     <th scope="col">Date Ordered</th>
-                    <th scope="col">Date Received</th>
+                    <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>
+                <?php foreach($customerOrder as $order):?>
                     <tr>
-                        <th scope="row">1</th>
+                        <th scope="row"><?php echo $order['order_id']; ?></th>
                         <td>
                             <table class="table text-center">
                             <thead>
@@ -95,87 +102,25 @@
                                 </tr>
                             </thead>
                             <tbody>
+                              <?php foreach($customerOrder as $orderC){?>
+                                <?php if($orderC['order_id'] == $order['order_id'] ) {?>
                                 <tr>
-                                    <td>Honey BBQ Beef</td>
-                                    <td>Php.200</td>
-                                    <td>4</td>
+                                    <td><?php echo $orderC['product_name']; ?></td>
+                                    <td><?php echo $orderC['price']; ?></td>
+                                    <td><?php echo $orderC['quantity']; ?></td>
                                 </tr>
-                                <tr>
-                                    <td>Teriyaki</td>
-                                    <td>Php.75</td>
-                                    <td>5</td>
-                                </tr>
+                                  <?php } ?>
+                                <?php } ?>
                             </tbody>
                             </table>
                         </td>
                     </td>
-                    <td>Emjay Rongavilla</td>
-                    <td>Php. 750.00</td>
-                    <td>10/12/2023</td>
-                    <td>10/24/2023</td>
+                    <td><?php echo $order['firstname'] . ' ' . $order['lastname']; ?></td>
+                    <td><?php echo $order['total_amount']; ?></td>
+                    <td><?php echo $order['created_at']; ?></td>
+                    <td><?php echo $order['order_status']; ?></td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>
-                            <table class="table text-center">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Order</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Honey BBQ Beef</td>
-                                    <td>Php.200</td>
-                                    <td>4</td>
-                                </tr>
-                            </tbody>
-                            </table>
-                        </td>
-                    </td>
-                    <td>Allen Whamos</td>
-                    <td>Php. 750.00</td>
-                    <td>10/12/2023</td>
-                    <td>10/24/2023</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>
-                            <table class="table text-center">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Order</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Honey BBQ Beef</td>
-                                    <td>Php.200</td>
-                                    <td>4</td>
-                                </tr>
-                                <tr>
-                                    <td>Teriyaki</td>
-                                    <td>Php.75</td>
-                                    <td>5</td>
-                                </tr>
-                                <tr>
-                                    <td>Tapsilog</td>
-                                    <td>Php.115</td>
-                                    <td>80</td>
-                                </tr>
-                            </tbody>
-                            </table>
-                        </td>
-                    </td>
-                    <td>Aleister 80k Alinsunurin</td>
-                    <td>Php. 80000.00</td>
-                    <td>10/12/2023</td>
-                    <td>10/24/2023</td>
-                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
           </div>

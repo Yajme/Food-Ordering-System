@@ -1,6 +1,7 @@
 <?php
 include_once('../../db/connection.php');
 require_once '../../model/productmodel.php';
+require_once '../../model/ordermodel.php';
 class adminProduct extends Database {
 
     public function addProduct($name, $description, $price, $category,$imagePath) {
@@ -33,6 +34,24 @@ class adminProduct extends Database {
             $product = new ProductModel();
             $availableProducts = $product->selectAllProducts();
             return $availableProducts;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function loadOrders(){
+        try{
+            $orderModel = new UserOrderModel();
+            $orders = $orderModel->orderDetail();
+            return $orders;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function customerOrders(){
+        try{
+            $orderModel = new UserOrderModel();
+            $orders = $orderModel->orderDetails();
+            return $orders;
         }catch(Exception $e){
             throw $e;
         }
