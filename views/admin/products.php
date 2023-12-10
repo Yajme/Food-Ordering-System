@@ -8,7 +8,7 @@ if (isset($_POST['addProd'])) {
       $prodDesc = $_POST['prodDesc'];
       $prodPrice = $_POST['prodPrice'];
       $prodCat = $_POST['category'];
-      $prodImage = $_POST["imagePath"];
+      $prodImage = $_FILES["imagePath"]["name"];
       $product = new adminProduct();
       $product->addProduct($prodName,$prodDesc,$prodPrice,$prodCat,$prodImage);
       header('location: products.php');
