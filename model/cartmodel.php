@@ -10,6 +10,13 @@ class Cart extends Database implements ICart{
     public function __construct(){
         parent::__construct();
     }
+    /**
+     * Retrieves the cart items for a specific customer.
+     *
+     * @param mixed $params The customer ID.
+     * @return array The cart items.
+     * @throws Exception If unable to get the cart.
+     */
     public function viewCart($params){
         try{
             $customerid = $this->escape_string($params);
@@ -21,6 +28,13 @@ class Cart extends Database implements ICart{
             throw $e;
         }
     }
+    /**
+     * Adds a product to the customer's cart.
+     *
+     * @param array $params The parameters containing customer ID, product ID, and quantity.
+     * @return int The number of rows affected by the insert query.
+     * @throws Exception If unable to add the product to the cart.
+     */
     public function addToCart($params){
         try{
             $customerid = $this->escape_string($params['customerid']);
@@ -34,6 +48,13 @@ class Cart extends Database implements ICart{
             throw $e;
         }
     }
+    /**
+     * Updates the quantity of a product in the customer's cart.
+     *
+     * @param array $params The parameters containing the customer ID, product ID, and quantity.
+     * @return int The number of rows affected by the update query.
+     * @throws Exception If unable to update the cart.
+     */
     public function updateCart($params){
         try{
             $customerid = $this->escape_string($params['customerid']);
@@ -47,6 +68,13 @@ class Cart extends Database implements ICart{
             throw $e;
         }
     }
+    /**
+     * Deletes a cart item for a specific customer and product.
+     *
+     * @param array $params The parameters containing the customer ID and product ID.
+     * @return int The number of rows affected by the deletion.
+     * @throws Exception If unable to delete the cart item.
+     */
     public function deleteCart($params){
         try{
             $customerid = $this->escape_string($params['customerid']);
