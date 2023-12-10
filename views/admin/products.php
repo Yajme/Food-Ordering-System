@@ -1,3 +1,55 @@
+<?php
+include_once('../../model/adminmodel.php');
+session_start();
+
+if (isset($_POST['addProd'])) {
+  try{
+      $prodName = $_POST["prodName"];
+      $prodDesc = $_POST['prodDesc'];
+      $prodPrice = $_POST['prodPrice'];
+      $prodCat = $_POST['category'];
+      $prodImage = $_POST["imagePath"];
+      $product = new adminProduct();
+      $product->addProduct($prodName,$prodDesc,$prodPrice,$prodCat,$prodImage);
+      header('location: products.php');
+
+  }catch(Exception $e){
+      $_SESSION['errorMessage'] = $e -> getMessage();
+      header('location: products.php');
+  }
+}
+
+if (isset($_POST['updateProd'])) {
+  try{
+      $prodID = $_POST['product_id'];
+      $prodName = $_POST['prodName'];
+      $prodDesc = $_POST['prodDesc'];
+      $prodPrice = $_POST['price'];
+      $product = new adminProduct();
+      $product->updateProduct($prodName,$prodDesc,$prodPrice,$prodID);
+      header('location: products.php');
+
+  }catch(Exception $e){
+      $_SESSION['errorMessage'] = $e -> getMessage();
+      header('location: products.php');
+  }
+}
+
+if (isset($_POST['deleteProd'])) {
+  try{
+      $prodID = $_POST['product_id'];
+      $product = new adminProduct();
+      $product->deleteProduct($prodID);
+      header('location: products.php');
+
+  }catch(Exception $e){
+      $_SESSION['errorMessage'] = $e -> getMessage();
+      header('location: products.php');
+  }
+}
+$products = new adminProduct();
+$productView = $products->loadProducts();
+?>
 <!doctype html>
 <html lang="en">
 
@@ -15,58 +67,9 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
     <!-- Sidebar Start -->
-    <aside class="left-sidebar">
-      <!-- Sidebar scroll-->
-        <div class="brand-logo d-flex align-items-center justify-content-between">
-          <a href="./index.html" class="text-nowrap logo-img">
-            <img src="../../public/admin/assets/images/logos/dark-logo.svg" width="180" alt="" />
-          </a>
-          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-            <i class="ti ti-x fs-8"></i>
-          </div>
-        </div>
-         <!-- Sidebar navigation-->
-         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
-            <ul id="sidebarnav">
-              <li class="nav-small-cap">
-                <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">Home</span>
-              </li>
-              <li class="sidebar-item">
-                <a class="sidebar-link" href="./index.php" aria-expanded="false">
-                  <span>
-                    <i class="ti ti-layout-dashboard"></i>
-                  </span>
-                  <span class="hide-menu">Dashboard</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                  <a class="sidebar-link" href="./sales.php" aria-expanded="false">
-                    <span>
-                      <i class="ti ti-layout-dashboard"></i>
-                    </span>
-                    <span class="hide-menu">Sales</span>
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="./products.php" aria-expanded="false">
-                      <span>
-                        <i class="ti ti-layout-dashboard"></i>
-                      </span>
-                      <span class="hide-menu">Products</span>
-                    </a>
-                  </li>
-                  <li class="sidebar-item">
-                    <a class="sidebar-link" href="./orders.php" aria-expanded="false">
-                      <span>
-                        <i class="ti ti-layout-dashboard"></i>
-                      </span>
-                      <span class="hide-menu">Orders</span>
-                    </a>
-                  </li>
-                </ul>
-            </nav>
-      </aside>
+        <?php
+            include('../partials/admin-sidenav.php')
+        ?>
     <!--  Sidebar End -->
     <!--  Main wrapper -->
     <div class="body-wrapper">
@@ -124,115 +127,40 @@
               <button class="btn btn-info" id="myBtn">Add Product</button>
             </div>
             <!--Modal Starts Here-->
-                <div id="myModal" class="modal">
-                <!-- Modal content -->
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <hr>
-                        <h4 class="card-title mb-4">Product Information</h5>
-                        <form>
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="exampleInputEmail1">
-                                <!--<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Product Desc</label>
-                                <textarea class="form-control" name="" id="" cols="15" rows="5"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                 <div class="input-group">
-                                    <span class="input-group-text" id="">Product Price</span>
-                                    <input type="number" class="form-control" style="width: 10%;" id="exampleInputEmail1">
-                                    <span class="input-group-text" id="">Product Category</span>
-                                    <select name="category" class="form-control" id="">
-                                        <option value="Add On">Add on</option>
-                                        <option value="Main Dish">Main Dish</option>
-                                        <option value="Side Dish">Side Dish</option>
-                                    </select>
-                                 </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Add Product</button>
-                        </form>
-                    </div>
-                </div>
+            <?php
+              include('admin-modal.php');
+              include('admin-upmodal.php');
+            ?>
             <br>
+            
             <table class="table table-striped">
                 <thead>
                     <tr>
                     <th scope="col">Product ID</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Product Description</th>
+                    <th scope="col">Category</th>
                     <th scope="col">Price</th>
                     <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
+                <?php foreach($productView as $availableProducts):?>
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Tonkatsu</td>
-                        <td>Masarap</td>
-                        <td>Php 85.00</td>
-                        <td><input type="submit" class="btn btn-success" value="Update">
-                          <br>
-                          <input type="submit" class="btn btn-danger mt-1" value="Delete"></td>
+                      
+                        <th scope="row"><?php echo $availableProducts['ID']; ?></th>
+                        <td><?php echo $availableProducts['Product Name']; ?></td>
+                        <td><?php echo $availableProducts['Description']; ?></td>
+                        <td><?php echo $availableProducts['Category']; ?></td>
+                        <td><?php echo $availableProducts['Price']; ?></td>
+                        <td><button class="btn btn-success"onclick="openModal(<?php echo $availableProducts['ID']; ?>)">Update</button>
+                            <button class="btn btn-danger"onclick="openDeleteModal(<?php echo $availableProducts['ID']; ?>)">Delete</button></td>
+                      
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Honey Beef BBQ</td>
-                        <td>Sobrang sarap</td>
-                        <td>Php 99.00</td>
-                        <td><input type="submit" class="btn btn-success" value="Update">
-                          <br>
-                        <input type="submit" class="btn btn-danger mt-1" value="Delete"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Tapsilog</td>
-                        <td>Best Tapsi</td>
-                        <td>Php 85.00</td>
-                        <td><input type="submit" class="btn btn-success" value="Update">
-                          <br>
-                        <input type="submit" class="btn btn-danger mt-1" value="Delete"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">4</th>
-                        <td>Tocilog</td>
-                        <td>Mekus Mekus</td>
-                        <td>Php 85.00</td>
-                        <td><input type="submit" class="btn btn-success" value="Update">
-                          <br>
-                        <input type="submit" class="btn btn-danger mt-1" value="Delete"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">5</th>
-                        <td>Cornsilog</td>
-                        <td>The best</td>
-                        <td>Php 85.00</td>
-                        <td><input type="submit" class="btn btn-success" value="Update">
-                          <br>
-                        <input type="submit" class="btn btn-danger mt-1" value="Delete"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">6</th>
-                        <td>Bento</td>
-                        <td>Sobrang sarap</td>
-                        <td>Php 85.00</td>
-                        <td><input type="submit" class="btn btn-success" value="Update">
-                          <br>
-                        <input type="submit" class="btn btn-danger mt-1" value="Delete"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">7</th>
-                        <td>Teriyaki</td>
-                        <td>Yum yum yum</td>
-                        <td>Php 85.00</td>
-                        <td><input type="submit" class="btn btn-success" value="Update">
-                          <br>
-                        <input type="submit" class="btn btn-danger mt-1" value="Delete"></td>
-                    </tr>
+                  <?php endforeach; ?>
                 </tbody>
             </table>
+            
           </div>
         </div>
       </div>
@@ -244,6 +172,26 @@
   <script src="../../public/admin/assets/js/app.min.js"></script>
   <script src="../../public/admin/assets/libs/simplebar/dist/simplebar.js"></script>
   <script src="../../public/admin/js/modal.js"></script>
+  <script>
+    // JavaScript functions for opening/closing modals
+    function openModal(productId) {
+        document.getElementById('updateProductId').value = productId;
+        document.getElementById('updateModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('updateModal').style.display = 'none';
+    }
+
+    function openDeleteModal(productId) {
+        document.getElementById('deleteProductId').value = productId;
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+</script>
 </body>
 
-</ht
+</html>
