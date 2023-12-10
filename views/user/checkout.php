@@ -17,11 +17,11 @@ if(isset($_POST['submit'])){
     $data = array(
         'customerid' => $Customerid,
         'payment' => $_POST['payment'],
-        'address' =>$Controller->Cart('getAddress',$Customerid),
+        'address' =>$Controller->User('getAddress',$Customerid),
         'cart'=>$Controller->Cart('viewCart',$Customerid),
         'total'=> $_SESSION['total']
     );
-    $Controller->Cart('checkout',$data);
+    $Controller->User('checkout',$data);
     
     $_SESSION['message'] = "Order Placed Successfully";
      echo "<script>window.location.href='index';</script>";
@@ -67,15 +67,15 @@ if(isset($_GET)){
     }
     $Controller = new CustomerController();
     $Customerid = $_COOKIE['customerid'];
-    $address = $Controller->Cart('getAddress',$Customerid);
+    $address = $Controller->User('getAddress',$Customerid);
     $cart = $Controller->Cart('viewCart',$Customerid);
-    $payment = $Controller->Cart('viewPaymentMethod');
+    $payment = $Controller->User('viewPaymentMethod');
     if(!$cart) header('location: index');  
     $data = array(
         'customerid' => $Customerid,
-        'address' =>$Controller->Cart('getAddress',$Customerid),
+        'address' =>$Controller->User('getAddress',$Customerid),
         'cart'=>$cart,
-        'payment' => $Controller->Cart('viewPaymentMethod')
+        'payment' => $Controller->User('viewPaymentMethod')
     );
     return $data;
 }

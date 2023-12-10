@@ -13,40 +13,51 @@ class Cart extends Database implements ICart{
     /**
      * Retrieves the cart items for a specific customer.
      *
-     * @param mixed $params The customer ID.
-     * @return array The cart items.
-     * @throws Exception If unable to get the cart.
+     * @param int $customerid The ID of the customer.
+     * @return array The cart items for the customer.
+     * @throws Exception If the cart is empty.
      */
-    public function viewCart($params){
-        try{
-            $customerid = $this->escape_string($params);
-            $query = "SELECT * FROM `view_customer_cart` WHERE `customer_id` = '$customerid'";
-            $rows = $this->read($query);
-            if(!$rows) throw new Exception("Unable to get cart");
-            return $rows;
-        }catch(Exception $e){
-            throw $e;
-        }
+    public function viewCart($customerid){
+        $customerid = $this->escape_string($customerid);
+        $query = "SELECT * FROM view_customer_cart WHERE customer_id = $customerid";
+        $rows = $this->read($query);
+        if(!$rows) throw new Exception("Cart is empty!");
+        return $rows;
     }
-    /**
+     /**
      * Adds a product to the customer's cart.
      *
-     * @param array $params The parameters containing customer ID, product ID, and quantity.
-     * @return int The number of rows affected by the insert query.
-     * @throws Exception If unable to add the product to the cart.
+     * @param array $params An array containing the product ID, customer ID, and quantity.
+     * @return mixed Returns the result of the database operation.
+     * @throws Exception If there is an error adding the product to the cart.
      */
-    public function addToCart($params){
+    public function addToCart($params=array()){
+        
         try{
-            $customerid = $this->escape_string($params['customerid']);
-            $productid = $this->escape_string($params['productid']);
-            $quantity = $this->escape_string($params['quantity']);
-            $query = "INSERT INTO `tbl_customer_cart`(`customer_id`, `product_id`, `quantity`) VALUES ('$customerid','$productid','$quantity')";
+            $this->connection->autocommit(FALSE);
+            $productid = $this->escape_string($params[0]['productid']);
+            $customerid = $this->escape_string($params[0]['customerid']);
+            $quantity = $this->escape_string($params[0]['quantity']);
+            $query = "SELECT * FROM tbl_customer_cart WHERE product_id = $productid AND customer_id = $customerid";
+            $rows = $this->read($query);
+            if($rows){
+                $quantity = $rows[0]['quantity'] + $quantity;
+                $query = "UPDATE `tbl_customer_cart` SET `quantity`=$quantity, `modified_at`=now(), `deleted_at` =NULL WHERE product_id = $productid AND customer_id = $customerid";
+                $rows = $this->execute($query);
+                if(!$rows) throw new Exception("Unable to add to cart");
+                $this->connection->commit();
+                return $rows;
+            }
+            $query = "INSERT INTO `tbl_customer_cart`(`product_id`, `customer_id`,`quantity`) VALUES ($productid,$customerid,$quantity)";
             $rows = $this->execute($query);
             if(!$rows) throw new Exception("Unable to add to cart");
-            return $rows;
+            $this->connection->commit();
+        return $rows;
         }catch(Exception $e){
+            $this->connection->rollback();
             throw $e;
         }
+        
     }
     /**
      * Updates the quantity of a product in the customer's cart.
@@ -86,6 +97,20 @@ class Cart extends Database implements ICart{
         }catch(Exception $e){
             throw $e;
         }
+    }
+    /**
+     * Counts the number of items in the cart for a given customer.
+     *
+     * @param int $customerid The ID of the customer.
+     * @return array The result of the query, containing the count of items in the cart.
+     * @throws Exception If the cart is empty.
+     */
+    public function countCart($customerid){
+        $customerid = $this->escape_string($customerid);
+        $query = "SELECT count(*) as CartCount FROM view_customer_cart WHERE customer_id = $customerid";
+        $rows = $this->read($query);
+        if(!$rows) throw new Exception("Cart is empty!");
+        return $rows;
     }
 }
 

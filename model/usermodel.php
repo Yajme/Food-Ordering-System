@@ -93,70 +93,10 @@ class UserModel extends Database{
         }
         
     }
-    /**
-     * Adds a product to the customer's cart.
-     *
-     * @param array $params An array containing the product ID, customer ID, and quantity.
-     * @return mixed Returns the result of the database operation.
-     * @throws Exception If there is an error adding the product to the cart.
-     */
-    public function addToCart($params=array()){
-        
-        try{
-            $this->connection->autocommit(FALSE);
-            $productid = $this->escape_string($params[0]['productid']);
-            $customerid = $this->escape_string($params[0]['customerid']);
-            $quantity = $this->escape_string($params[0]['quantity']);
-            $query = "SELECT * FROM tbl_customer_cart WHERE product_id = $productid AND customer_id = $customerid";
-            $rows = $this->read($query);
-            if($rows){
-                $quantity = $rows[0]['quantity'] + $quantity;
-                $query = "UPDATE `tbl_customer_cart` SET `quantity`=$quantity, `modified_at`=now(), `deleted_at` =NULL WHERE product_id = $productid AND customer_id = $customerid";
-                $rows = $this->execute($query);
-                if(!$rows) throw new Exception("Unable to add to cart");
-                $this->connection->commit();
-                return $rows;
-            }
-            $query = "INSERT INTO `tbl_customer_cart`(`product_id`, `customer_id`,`quantity`) VALUES ($productid,$customerid,$quantity)";
-            $rows = $this->execute($query);
-            if(!$rows) throw new Exception("Unable to add to cart");
-            $this->connection->commit();
-        return $rows;
-        }catch(Exception $e){
-            $this->connection->rollback();
-            throw $e;
-        }
-        
-    }
+   
 
-    /**
-     * Retrieves the cart items for a specific customer.
-     *
-     * @param int $customerid The ID of the customer.
-     * @return array The cart items for the customer.
-     * @throws Exception If the cart is empty.
-     */
-    public function viewCart($customerid){
-        $customerid = $this->escape_string($customerid);
-        $query = "SELECT * FROM view_customer_cart WHERE customer_id = $customerid";
-        $rows = $this->read($query);
-        if(!$rows) throw new Exception("Cart is empty!");
-        return $rows;
-    }
-    /**
-     * Counts the number of items in the cart for a given customer.
-     *
-     * @param int $customerid The ID of the customer.
-     * @return array The result of the query, containing the count of items in the cart.
-     * @throws Exception If the cart is empty.
-     */
-    public function countCart($customerid){
-        $customerid = $this->escape_string($customerid);
-        $query = "SELECT count(*) as CartCount FROM view_customer_cart WHERE customer_id = $customerid";
-        $rows = $this->read($query);
-        if(!$rows) throw new Exception("Cart is empty!");
-        return $rows;
-    }
+    
+    
 
     /**
      * Deletes a product from the customer's cart.

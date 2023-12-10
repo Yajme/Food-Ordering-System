@@ -4,6 +4,7 @@ require_once '../../model/usermodel.php';
 require_once '../../utils/userinterface.php';
 require_once '../../utils/authentication.php';
 require_once '../../model/productmodel.php';
+require_once '../../model/cartmodel.php';
 require_once '../../class/order.php';
 interface ICustomer{
     
@@ -31,7 +32,7 @@ abstract class BaseCustomer implements ICustomer, ILogin{
     public function Cart($Function, $params = array())
     {
         try{
-            return  $this->initializeUserModel(new UserModel())->$Function($params);
+            return  $this->initializeCartModel(new Cart())->$Function($params);
         }catch(Exception $e){
             throw $e;
         }
@@ -54,6 +55,7 @@ abstract class BaseCustomer implements ICustomer, ILogin{
     }
     private function initializeProductModel(ProductModel $product){return $product;}
     private function initializeUserModel(UserModel $user){return $user;}
+    private function initializeCartModel(Cart $cart){return $cart;}
     private function initializeOrderModel(){return new UserOrder(new UserOrderModel());}
 }
 class CustomerController extends BaseCustomer {
