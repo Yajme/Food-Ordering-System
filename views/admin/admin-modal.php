@@ -4,11 +4,10 @@
                         <span class="close">&times;</span>
                         <hr>
                         <h4 class="card-title mb-4">Product Information</h5>
-                        <form method="POST">
+                        <form method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label class="form-label">Product Name</label>
                                 <input type="text" class="form-control" name="prodName">
-                                <!--<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Product Desc</label>

@@ -1,6 +1,23 @@
+<?php
+    
+   // Check if the form is submitted
+   if (isset($_POST['login'])) {
+    try{
+        $username = $_POST["username"];
+        $password = $_POST['password'];
+
+        $orders = new adminProduct();
+        $orders->Login($username,$password);
+
+    }catch(Exception $e){
+        $_SESSION['errorMessage'] = $e -> getMessage();
+    }
+   
+}
+
+?>
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,27 +38,19 @@
             <div class="card mb-0">
               <div class="card-body">
                 <a href="./index.html" class="text-nowrap logo-img text-center d-block py-3 w-100">
-                  <img src="../../public/admin/assets/images/logos/dark-logo.svg" width="180" alt="">
+                  <img src="../../public/assets/Untitled design1.png" width="180" alt="">
                 </a>
                 <p class="text-center">Log in as Administrator</p>
                 <form>
                   <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label">Username</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <input type="text" class="form-control" name="username">
                   </div>
                   <div class="mb-4">
                     <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1">
+                    <input type="password" class="form-control" name="password">
                   </div>
-                  <div class="d-flex align-items-center justify-content-between mb-4">
-                    <div class="form-check">
-                      <input class="form-check-input primary" type="checkbox" value="" id="flexCheckChecked" checked>
-                      <label class="form-check-label text-dark" for="flexCheckChecked">
-                        Remember this Device
-                      </label>
-                    </div>
-                    <a class="text-primary fw-bold" href="./index.html">Forgot Password ?</a>
-                  </div>
+                  <input type="submit" class="btn btn-primary" name="login" value="Login">
                 </form>
               </div>
             </div>
