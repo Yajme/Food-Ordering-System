@@ -1,8 +1,8 @@
 <?php include_once '../partials/shop-header.php';
 try{
     
-    
-if(!isset($_SESSION['user_name'])) header('location: index.php');
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION['user_name'])) echo "<script>window.location.href='index';</script>";
 
 /**
  * Process the form submission for checkout.
@@ -33,7 +33,8 @@ if(isset($_POST['submit'])){
  */
 
 if(isset($_GET)){
-    
+    $Data = LoadDetails(new CustomerController(),'User','getAddress',$_COOKIE['customerid']);
+    var_dump($Data);
     $Controller = new CustomerController();
     $count = $Controller->Cart('countCart',$_COOKIE['customerid']);
     
@@ -43,7 +44,7 @@ if(isset($_GET)){
         $payment = $data['payment'];
         $cart = $data['cart'];
     }else{
-        header('location: index');
+        echo "<script>window.location.href='index';</script>";
         exit();
     }
     
@@ -51,12 +52,7 @@ if(isset($_GET)){
 
 }
 }catch(Exception $e){
-    try{
         $_SESSION['errorMessage'] = $e->getMessage();
-    }catch(Exception $e){
-        $_SESSION['errorMessage'] = $e->getMessage();
-    }
-    
 }
 
  function loadOrderDetails(){
@@ -111,55 +107,33 @@ if(isset($_GET)){
             unset($_SESSION['errorMessage']);?>
             </div>
         <?php }?>
+
         <div class="row px-xl-5">
+            <div class="col-md-12 col-lg-8 col-xxl-7">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Shipping Address</span></h5>
+                <a href="address" >
+                    <div class="bg-light p-30 mb-5">
+                        <div class="row">
+                            <div class="col-md-6">
+                                Hello
+                            </div>
+                        </div>
+                    </div>    
+                </a>
+            </div>
             <div class="col-lg-8">
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Items</span></h5>
                 <div class="bg-light p-30 mb-5">
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>First Name</label>
-                            <input class="form-control" type="text" placeholder="First Name" value="<?php echo $address[0]['firstname'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Last Name</label>
-                            <input class="form-control" type="text" placeholder="Last Name" value="<?php echo $address[0]['lastname'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>E-mail</label>
-                            <input class="form-control" type="text" placeholder="Email" value="<?php echo $address[0]['email'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Mobile No</label>
-                            <input class="form-control" type="text" placeholder="Phone" value="<?php echo $address[0]['phone'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 1</label>
-                            <input class="form-control" type="text" placeholder="Street" value="<?php echo $address[0]['street_number'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 2 (Optional)</label>
-                            <input class="form-control" type="text" placeholder="Building/House Number" value="<?php echo $address[0]['building_no'];?>">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Barangay</label>
-                            <select class="custom-select" name="barangay" required>
-                                <option selected><?php echo $address[0]['barangay'];?></option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>City</label>
-                            <input class="form-control" type="text" placeholder="New York" value="<?php echo $address[0]['municipality'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Postal Code</label>
-                            <input class="form-control" type="text" placeholder="Postal Code" value="<?php echo $address[0]['postal_code'];?>" required>
-                        </div>
-                        <div class="col-md-12">
-                           
+                    <div class="container">
+                        <div class="row">
+                            <div class="w-100"></div>
+                            <div class="col-md-2 col-lg-2"><img src="" class="img-thumbnail" alt="..."></div>
+                            <div class="col">hi</div>
+                            <div class="col">Musta</div>
+                            <div class="col-md-2">eto okay lang</div>
                         </div>
                     </div>
                 </div>
-                
             </div>
             <div class="col-lg-4">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Order Total</span></h5>
@@ -220,9 +194,7 @@ if(isset($_GET)){
 
     </form>
     <!-- Checkout End -->
-            <script>
-        
-    
+<script>    
 </script>
             
 <?php include_once '../partials/shop-footer.php';?>

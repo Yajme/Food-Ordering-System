@@ -43,6 +43,7 @@
         <div class="col-md-6 p-6">
             <br>
             <button type="submit" class="btn btn-primary py-2 px-4" name="register">Save</button>
+            <button type="button" class="btn btn-danger py-2 px-4" onclick="window.location.href='address'">Cancel</button>
         </div>
        
     </div>

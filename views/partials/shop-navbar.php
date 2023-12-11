@@ -1,4 +1,17 @@
 <?php 
+/**
+ * Loads details by calling a method on a CustomerController object.
+ *
+ * @param CustomerController $Controller The CustomerController object.
+ * @param string $object The name of the method to call on the CustomerController object.
+ * @param string $method The name of the method to call on the CustomerController object.
+ * @param array|null $params Optional parameters to pass to the method.
+ * @return mixed The result of the method call.
+ */
+function LoadDetails(CustomerController $Controller,$object,$method,$params=null){
+    return $Controller->$object($method,$params);
+}
+
 try{
     $customer = new CustomerController();
     $cart = array(

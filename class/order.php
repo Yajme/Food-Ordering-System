@@ -90,6 +90,7 @@ class UserOrder extends Order{
 
     public function __construct(OrderModel $OrderModel){
         parent::__construct( $OrderModel);
+        
     }
     
     /**
@@ -101,45 +102,54 @@ class UserOrder extends Order{
      */
     public function preparingOrders($params){
         try{
-            //var_dump($params);
+            $show = 5;
+            $keys = array_keys($params);
+            if ($keys === range(0, count($params) - 1)) {
+                $show = ($params[1]) ? $params[1] : '';
+                $params = $params[0];
+
+             }
+             $all = ($show == '*') ? true : false;
             $count = 0;
             foreach($params as $orderid){
-                
-                if($orderid[0]['order_status'] =='Preparing'){
+                if($orderid[0]['order_status'] =='Preparing'){ 
                     $count++;
                     echo '
-                    <div class="row mb-3 p-5">
-                    <div class="col center p-4">
-                    <a href="order?product='.$orderid[0]['order_id'].'" class="btn btn-primary">View</a> <br> <br>
-                    <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Product Name</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        
-                                    </tr>
-                                </thead>';
-                foreach($orderid as $item){
-                    if($item['order_status'] == 'Preparing'){
-                        echo '
-                                
-                                <tbody>
-                                
-                                    <tr>
-                                        <td>'.$item['product_name'].'</td>
-                                        <td>'.$item['quantity'].'</td>
-                                        <td>'.$item['price'].'</td>
-                                        
-                                    </tr>
-                                
-                                </tbody>
-                                
-                            ';
+                    <div class="vstack">
+                    <a href="order?product='.$orderid[0]['order_id'].'" class="text-body mr-3">
+                    <div class="container m-5">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-9"><h4 class="mb-3">Order number: '.$orderid[0]['order_id'].'</h4></div>
+                        <div class="col-lg-1 offset-lg-2">
+                        <div class="border border-primary rounded-pill-3">
+                        '.$orderid[0]['order_status'].'
+                        </div>
+                        </div>
+                    </div>';
+                    foreach($orderid as $item){
+                        
+                            echo '
+                            <div class="row">
+                            <div class="w-100"></div>
+                            <div class="col-md-2"><img src="'.$item['image_path'].'" class="img-thumbnail"/></div>
+                            <div class="col">'.$item['product_name'].'</div>
+                            <div class="col">'.$item['price'].'</div>
+                            <div class="col-md-2">'.$item['quantity'].'</div>
+
+                        </div>  
+                                    
+                                ';
+                        
                     }
+                    echo '
+                    </div>
+                    </a>
+                        
+                    </div>';
+                    if(!$all && $count==$show) break;
                 }
-                echo '</table> </div></div>';
-                }
+    
+    
             }
             if($count == 0){
                 echo '<div class="row mb-3 p-5">
@@ -148,7 +158,7 @@ class UserOrder extends Order{
                 </div>
                 </div>';
             }
-        }catch (Exception $e){
+        }catch(Exception $e){
             throw $e;
         }
     }
@@ -160,53 +170,65 @@ class UserOrder extends Order{
      * @return void
      */
     public function shippingOrders($params){
-        $count = 0;
-        foreach($params as $orderid){
-            
-            if($orderid[0]['order_status'] =='Shipping'){ 
-                $count++;
-                echo '
-                    <div class="row mb-3 p-5">
-                    <div class="col center p-4">
-                    <a href="order?product='.$orderid[0]['order_id'].'" class="btn btn-primary">View</a> <br> <br>
-                    <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Product Name</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        
-                                    </tr>
-                                </thead>';
-                foreach($orderid as $item){
-                    
-                        echo '
-                                
-                                <tbody>
-                                
-                                    <tr>
-                                        <td>'.$item['product_name'].'</td>
-                                        <td>'.$item['quantity'].'</td>
-                                        <td>'.$item['price'].'</td>
-                                        
-                                    </tr>
-                                
-                                </tbody>
-                                
-                            ';
-                    
-                }
-                echo '</table> </div></div>';
+        try{
+
+            $show = 5;
+            $keys = array_keys($params);
+            if ($keys === range(0, count($params) - 1)) {
+                $show = ($params[1]) ? $params[1] : '';
+                $params = $params[0];
             }
+            $all = ($show == '*') ? true : false;
+            $count = 0;
+            foreach($params as $orderid){
+                if($orderid[0]['order_status'] =='Shipping'){ 
+                    $count++;
+                    echo '
+                    <div class="vstack">
+                    <a href="order?product='.$orderid[0]['order_id'].'" class="text-body mr-3">
+                    <div class="container m-5">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-9"><h4 class="mb-3">Order number: '.$orderid[0]['order_id'].'</h4></div>
+                        <div class="col-lg-1 offset-lg-2">
+                        <div class="border border-primary rounded-pill">
+                        '.$orderid[0]['order_status'].'
+                        </div>
+                        </div>
+                    </div>';
+                    foreach($orderid as $item){
+                        
+                            echo '
+                            <div class="row">
+                            <div class="w-100"></div>
+                            <div class="col-md-2"><img src="'.$item['image_path'].'" class="img-thumbnail"/></div>
+                            <div class="col">'.$item['product_name'].'</div>
+                            <div class="col">'.$item['price'].'</div>
+                            <div class="col-md-2">'.$item['quantity'].'</div>
 
-
-        }
-        if($count == 0){
-            echo '<div class="row mb-3 p-5">
-            <div class="col center p-4">
-            <h4 class="mb-3">No Orders</h4>
-            </div>
-            </div>';
+                        </div>  
+                                    
+                                ';
+                        
+                    }
+                    echo '
+                    </div>
+                    </a>
+                        
+                    </div>';
+                    if(!$all && $count==$show) break;
+                }
+    
+    
+            }
+            if($count == 0){
+                echo '<div class="row mb-3 p-5">
+                <div class="col center p-4">
+                <h4 class="mb-3">No Orders</h4>
+                </div>
+                </div>';
+            }
+        }catch(Exception $e){
+            throw $e;
         }
     }
 
@@ -217,67 +239,76 @@ class UserOrder extends Order{
      * @return void
      */
     public function deliveredOrders($params){
-        $count = 0;
-        foreach($params as $orderid){
-            if($orderid[0]['order_status'] =='Delivered'){ 
-                $count++;
-                echo '
+        try{
+            $show = 5;
+            $keys = array_keys($params);
+            if ($keys === range(0, count($params) - 1)) {
+                $show = ($params[1]) ? $params[1] : '';
+                $params = $params[0];
+            }
+            $all = ($show == '*') ? true : false;
+            $count = 0;
+            foreach($params as $orderid){
+                if($orderid[0]['order_status'] =='Delivered'){ 
+                    $count++;
+                    echo '
+                    <div class="vstack">
+                    <a href="order?product='.$orderid[0]['order_id'].'" class="text-body mr-3">
+                    <div class="container m-5">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-9"><h4 class="mb-3">Order number: '.$orderid[0]['order_id'].'</h4></div>
+                        <div class="col-lg-1 offset-lg-2">
+                        <div class="border border-primary rounded-pill">
+                        '.$orderid[0]['order_status'].'
+                        </div>
+                        </div>
+                    </div>';
+                    foreach($orderid as $item){
                         
-                    
-                    <div class="row mb-3 p-5">
-                    <div class="col center p-4">
-                    <a href="order?product='.$orderid[0]['order_id'].'" class="btn btn-primary">View</a> <br> <br>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                        
-                            </tr>
-                        </thead>'
-                        ;
-                foreach($orderid as $item){
-                    
-                        echo '
-                                
-                                <tbody>
-                                
-                                    <tr>
-                                        <td>'.$item['product_name'].'</td>
-                                        <td>'.$item['quantity'].'</td>
-                                        <td>'.$item['price'].'</td>
-                                        
-                                    </tr>
-                                
-                                </tbody>
-                                
-                            ';
-                    
-                }
-                echo '
-                </table> 
-                <form action="order" method="post">
-                <input type="hidden" name="orderid" value="'.$orderid[0]['order_id'].'">
-                <input type="hidden" name="customerid" value="'.$_COOKIE['customerid'].'">
-                <input type="submit" name="received" value="Recieved" class="btn btn-primary float-right"> <br> <br>
+                            echo '
+                            <div class="row">
+                            <div class="w-100"></div>
+                            <div class="col-md-2"><img src="'.$item['image_path'].'" class="img-thumbnail"/></div>
+                            <div class="col">'.$item['product_name'].'</div>
+                            <div class="col">'.$item['price'].'</div>
+                            <div class="col-md-2">'.$item['quantity'].'</div>
 
-                </form>
+                        </div>  
+                                    
+                                ';
+                        
+                    }
+                    echo '
+                    </div>
+                    </a>
+                    <div class="row">
+                    <div class="w-100"></div>
+                    
+                    <div class="col-lg-1 offset-lg-11">
+                        <form action="order" method="post">
+                        <input type="hidden" name="orderid" value="'.$orderid[0]['order_id'].'">
+                        <input type="hidden" name="customerid" value="'.$_COOKIE['customerid'].'">
+                        <input class="btn btn-primary" type="submit" name="received"value="Recieve">
+                        </form>
+                    </div>
+                    <div class="w-100"></div>
+                    
+                    </div>
+                    </div>';
+                    if(!$all && $count==$show) break;
+                }
+    
+    
+            }
+            if($count == 0){
+                echo '<div class="row mb-3 p-5">
+                <div class="col center p-4">
+                <h4 class="mb-3">No Orders</h4>
                 </div>
-                
-                
-                 
                 </div>';
             }
-                
-
-        }
-        if($count == 0){
-            echo '<div class="row mb-3 p-5">
-            <div class="col center p-4">
-            <h4 class="mb-3">No Orders</h4>
-            </div>
-            </div>';
+        }catch(Exception $e){
+            throw $e;
         }
     }
     /**
@@ -288,65 +319,65 @@ class UserOrder extends Order{
      */
     
     public function receivedOrders($params){
-        $count = 0;
-        foreach($params as $orderid){
-            if($orderid[0]['order_status'] =='Recieved'){ 
-                $count++;
-                echo '
+        try{
+            $show = 5;
+            $keys = array_keys($params);
+            if ($keys === range(0, count($params) - 1)) {
+                $show = ($params[1]) ? $params[1] : '';
+                $params = $params[0];
+            }
+            $all = ($show == '*') ? true : false;
+            $count = 0;
+            foreach($params as $orderid){
+                if($orderid[0]['order_status'] =='Recieved'){ 
+                    $count++;
+                    echo '
+                    <div class="vstack">
+                    <a href="order?product='.$orderid[0]['order_id'].'" class="text-body mr-3">
+                    <div class="container m-5">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-9"><h4 class="mb-3">Order number: '.$orderid[0]['order_id'].'</h4></div>
+                        <div class="col-lg-1 offset-lg-2">
+                        <div class="border border-primary rounded-pill">
+                        '.$orderid[0]['order_status'].'
+                        </div>
+                        </div>
+                    </div>';
+                    foreach($orderid as $item){
                         
-                    
-                    <div class="row mb-3 p-5">
-                    <div class="col center p-4">
-                    <a href="order?product='.$orderid[0]['order_id'].'" class="btn btn-primary">View</a> <br> <br>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                        
-                            </tr>
-                        </thead>'
-                        ;
-                foreach($orderid as $item){
-                    
-                        echo '
-                                
-                                <tbody>
-                                
-                                    <tr>
-                                        <td>'.$item['product_name'].'</td>
-                                        <td>'.$item['quantity'].'</td>
-                                        <td>'.$item['price'].'</td>
-                                        
-                                    </tr>
-                                
-                                </tbody>
-                                
-                            ';
-                    
+                            echo '
+                            <div class="row">
+                            <div class="w-100"></div>
+                            <div class="col-md-2"><img src="'.$item['image_path'].'" class="img-fluid img-thumbnail"/></div>
+                            <div class="col">'.$item['product_name'].'</div>
+                            <div class="col"> ₱'.$item['price'].'</div>
+                            <div class="col-md-2">Qty '.$item['quantity'].'</div>
+                        </div>  
+                                    
+                                ';
+                        
+                    }
+                    echo '
+                    </div>
+                    </a>
+                        
+                    </div>';
+                    if(!$all && $count==$show) break;
                 }
-                echo '
-                </table> 
-                
+    
+    
+            }
+            if($count == 0){
+                echo '<div class="row mb-3 p-5">
+                <div class="col center p-4">
+                <h4 class="mb-3">No Orders</h4>
                 </div>
-                
-                
-                 
                 </div>';
             }
-                
-
-        }
-        if($count == 0){
-            echo '<div class="row mb-3 p-5">
-            <div class="col center p-4">
-            <h4 class="mb-3">No Orders</h4>
-            </div>
-            </div>';
+        }catch(Exception $e){
+            throw $e;
         }
     }
 }
-
 
 ?>
