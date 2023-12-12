@@ -8,6 +8,7 @@
  * If any exception occurs during the process, it captures the error message and stores it in the session.
  */
 try{
+
     /**
      * This code block checks if the 'add-cart' POST parameter is not set.
      * If it is not set, it further checks if the 'name' GET parameter is not set.
@@ -29,7 +30,7 @@ try{
              * @return array of data of the product.
              */
             $_SESSION['product'] = null;
-            $product = ExecuteObject(new CustomerController(),'selectProductBySearch',$_GET['name']);
+            $product = ExecuteObject(new CustomerController(),'Products','selectProductBySearch',$_GET['name']);
             $product = $product[0];
             $_SESSION['product'] = $product;
         }

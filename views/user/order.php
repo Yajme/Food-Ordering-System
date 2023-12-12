@@ -14,7 +14,6 @@ if(isset($_POST['received'])){
     }catch(Exception $e){
         $_SESSION['errorMessage'] =  $e->getMessage();
     }
-    
 }
 ?>
 <?php if(isset($_SESSION['errorMessage'])){ ?>

@@ -1,12 +1,25 @@
 <?php include_once '../partials/shop-header.php';
 
 
-try{
+/**
+ * This code initializes an object of the CustomerController class and retrieves data for different sections of the user index page.
+ * It loads categories, featured products, and recent products using the Products method of the CustomerController class.
+ * If an exception occurs, the error message is stored in the session variable 'error'.
+ */
+
+try {
+    // Initialize Object
     $Controller = new CustomerController();
+
+    // Categories Section
     $categories = $Controller->Products('LoadCategories');
+
+    // Featured Products Section
     $featuredProducts = $Controller->Products('LoadFeaturedProducts');
+    
+    // Recent Products Section
     $recentProducts = $Controller->Products('recentProducts');
-}catch(Exception $e){
+} catch (Exception $e) {
     $_SESSION['error'] = $e->getMessage();
 }
 ?>

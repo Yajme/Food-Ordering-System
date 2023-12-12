@@ -5,6 +5,7 @@
  */
 try{
     $customer = new CustomerController();
+
     $categories = ExecuteObject(new CustomerController(),'Products','loadCategories');
     /**
      * This code block checks the query parameters and retrieves the appropriate products based on the conditions.
