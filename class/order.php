@@ -120,10 +120,8 @@ class UserOrder extends Order{
                     <div class="container m-5">
                     <div class="row">
                         <div class="col-md-12 col-lg-9"><h4 class="mb-3">Order number: '.$orderid[0]['order_id'].'</h4></div>
-                        <div class="col-lg-1 offset-lg-2">
-                        <div class="border border-primary rounded-pill-3">
-                        '.$orderid[0]['order_status'].'
-                        </div>
+                        <div class="col-lg-1 offset-lg-2 d-flex justify-content-center align-items-center" style="border:1px solid #cecece; border-radius: 10px;background-color: #dfe6e9;color: #2d3436;">
+                            '.$orderid[0]['order_status'].'
                         </div>
                     </div>';
                     foreach($orderid as $item){
@@ -189,10 +187,8 @@ class UserOrder extends Order{
                     <div class="container m-5">
                     <div class="row">
                         <div class="col-md-12 col-lg-9"><h4 class="mb-3">Order number: '.$orderid[0]['order_id'].'</h4></div>
-                        <div class="col-lg-1 offset-lg-2">
-                        <div class="border border-primary rounded-pill">
-                        '.$orderid[0]['order_status'].'
-                        </div>
+                        <div class="col-lg-1 offset-lg-2 d-flex justify-content-center align-items-center" style="border:1px solid #cecece; border-radius: 10px;background-color: #dfe6e9;color: #2d3436;">
+                            '.$orderid[0]['order_status'].'
                         </div>
                     </div>';
                     foreach($orderid as $item){
@@ -257,10 +253,8 @@ class UserOrder extends Order{
                     <div class="container m-5">
                     <div class="row">
                         <div class="col-md-12 col-lg-9"><h4 class="mb-3">Order number: '.$orderid[0]['order_id'].'</h4></div>
-                        <div class="col-lg-1 offset-lg-2">
-                        <div class="border border-primary rounded-pill">
-                        '.$orderid[0]['order_status'].'
-                        </div>
+                        <div class="col-lg-1 offset-lg-2 d-flex justify-content-center align-items-center" style="border:1px solid #cecece; border-radius: 10px;background-color: #dfe6e9;color: #2d3436;">
+                            '.$orderid[0]['order_status'].'
                         </div>
                     </div>';
                     foreach($orderid as $item){
@@ -337,10 +331,8 @@ class UserOrder extends Order{
                     <div class="container m-5">
                     <div class="row">
                         <div class="col-md-12 col-lg-9"><h4 class="mb-3">Order number: '.$orderid[0]['order_id'].'</h4></div>
-                        <div class="col-lg-1 offset-lg-2">
-                        <div class="border border-primary rounded-pill">
-                        '.$orderid[0]['order_status'].'
-                        </div>
+                        <div class="col-lg-1 offset-lg-2 d-flex justify-content-center align-items-center" style="border:1px solid #cecece; border-radius: 10px;background-color: #dfe6e9;color: #2d3436;">
+                            '.$orderid[0]['order_status'].'
                         </div>
                     </div>';
                     foreach($orderid as $item){

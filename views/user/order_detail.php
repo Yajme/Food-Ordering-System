@@ -1,4 +1,7 @@
-<?php $address = $controller->User('getAddress',$_COOKIE['customerid']); $address = $address[0]; //var_dump($data);?>
+<?php 
+$address = ExecuteObject(new CustomerController(),'User','selectAddress',$data[0]['address_id']);   
+$address = $address[0];
+?>
 <div class="container-fluid">
         <div class="row">
             <h4>Order Details</h4>

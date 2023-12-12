@@ -4,9 +4,7 @@
  * 
  */
 if(!isset($_SESSION['user_name'])) header('location: index.php');
-if(isset($_GET['product'])){
-    
-}
+
 
 if(isset($_POST['received'])){
     try{
@@ -19,12 +17,16 @@ if(isset($_POST['received'])){
     
 }
 ?>
-<div class="container-fluid">
 <?php if(isset($_SESSION['errorMessage'])){ ?>
+        <div class="container-fluid">
             <div class="alert alert-danger" role="alert">
-                <?php echo $_SESSION['errorMessage']; unset($_SESSION['errorMessage']); ?>
-            </div>
+                <?php echo $_SESSION['errorMessage']; 
+                unset($_SESSION['errorMessage']); ?>
+                </div>
+        </div>
         <?php }?>
+<div class="container-fluid">
+
         <?php if(isset($_SESSION['Message'])){ ?>
             <div class="alert alert-success" role="alert">
                 <?php echo $_SESSION['Message']; unset($_SESSION['Message']); ?>
@@ -37,14 +39,10 @@ if(isset($_POST['received'])){
                 <?php 
                 try{
                     if(!isset($_GET['product'])){
-                        $controller = new CustomerController();
-                        $data = $controller->Order('viewOrder',$_COOKIE['customerid']);
-                        
+                        $data = ExecuteObject(new CustomerController(),'Order','viewOrder',$_COOKIE['customerid']);
                         include_once('./order_list.php');
                     }else{
-                        $controller = new CustomerController();
-                        $data = $controller->Order('viewOrderDetail',array('customerid'=>$_COOKIE['customerid'],'orderid'=>$_GET['product']));
-        
+                        $data = ExecuteObject(new CustomerController(),'Order','viewOrderDetail',array('customerid'=>$_COOKIE['customerid'],'orderid'=>$_GET['product']));
                         include_once('./order_detail.php');
                     }
                 }catch(Exception $e){

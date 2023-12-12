@@ -70,19 +70,6 @@ class UserOrderModel extends OrderModel{
             throw $e;
         }
     }
-    public function updateOrderDetail($params){
-        try{
-            $customerid = $this->escape_string($params['customerid']);
-            $orderid = $this->escape_string($params['orderid']);
-            $query = "SELECT * FROM `view_customer_order` WHERE `customer_id` = '$customerid' AND `order_id` = '$orderid'";
-            $rows = $this->execute($query);
-            if(!$rows) throw new Exception("Unable to get orders");
-            return $rows;
-            
-        }catch(Exception $e){
-            throw $e;
-        }
-    }
     public function orderDetail(){
         try{
             $query = "SELECT * FROM `orderview` ORDER BY order_id ASC";

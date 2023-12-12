@@ -32,8 +32,8 @@ if(isset($_POST['register'])){
             'postalCode' => $_POST['postalCode']
         );
         
-        $Controller = new CustomerController();
-        $Controller->User('registerAddress',$data);
+
+        ExecuteObject(new CustomerController(),'user','registerAddress',$data);
         $_SESSION['Message'] = 'Address successfully registered';
     }catch(Exception $e){
         $_SESSION['errorMessage'] = $e->getMessage();
@@ -54,15 +54,14 @@ if(isset($_POST['edit'])){
          */
         $data = array(
             'customerid' => $_COOKIE['customerid'],
+            'addressid' => $_POST['addressid'], // This is the hidden input field in the edit modal. It contains the address ID.
             'buildingNumber' => $_POST['buildingNumber'],
             'streetNumber' => $_POST['streetNumber'],
             'barangay' => Location::Location('barangay',$_POST['barangay']),
             'municipality' => Location::Location('municipality',$_POST['municipality']),
             'postalCode' => $_POST['postalCode']
         );
-        
-        $Controller = new CustomerController();
-        $Controller->User('editAddress',$data);
+        ExecuteObject(new CustomerController(),'user','editAddress',$data);
         $_SESSION['Message'] = 'Address successfully edited';
     }catch(Exception $e){
         $_SESSION['errorMessage'] = $e->getMessage();
@@ -71,10 +70,8 @@ if(isset($_POST['edit'])){
 
 if(isset($_GET['delete'])){
     try{
-        $Controller = new CustomerController();
-        
-       // $Controller->User('deleteAddress',$_GET['delete']);
-        //$_SESSION['Message'] = 'Address successfully deleted';
+        ExecuteObject($Controller,'user','deleteAddress',$_GET['delete']);
+        $_SESSION['Message'] = 'Address successfully deleted';
     }catch(Exception $e){
         $_SESSION['errorMessage'] = $e->getMessage();
     }

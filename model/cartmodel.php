@@ -5,6 +5,7 @@ interface ICart{
     public function addToCart($params);
     public function updateCart($params);
     public function deleteCart($params);
+    public function countCart($customerid);
 }
 class Cart extends Database implements ICart{
     public function __construct(){
@@ -79,22 +80,27 @@ class Cart extends Database implements ICart{
             throw $e;
         }
     }
-    /**
-     * Deletes a cart item for a specific customer and product.
+     /**
+     * Deletes a product from the customer's cart.
      *
-     * @param array $params The parameters containing the customer ID and product ID.
+     * @param array $params The parameters for deleting the product from the cart.
+     *                      - productid: The ID of the product to be deleted.
+     *                      - customerid: The ID of the customer.
      * @return int The number of rows affected by the deletion.
-     * @throws Exception If unable to delete the cart item.
+     * @throws Exception If unable to delete the product from the cart.
      */
-    public function deleteCart($params){
+    public function deleteCart($params=array()){
         try{
-            $customerid = $this->escape_string($params['customerid']);
+            $this->connection->autocommit(FALSE);
             $productid = $this->escape_string($params['productid']);
-            $query = "UPDATE `tbl_customer_cart` SET `deleted_at` = NOW() WHERE `customer_id` = '$customerid' AND `product_id` = '$productid'";
+            $customerid = $this->escape_string($params['customerid']);
+            $query = "UPDATE `tbl_customer_cart` SET deleted_at = now(), quantity = 0 WHERE product_id = $productid AND customer_id = $customerid";
             $rows = $this->execute($query);
-            if(!$rows) throw new Exception("Unable to delete cart");
+            if(!$rows) throw new Exception("Unable to delete from cart");
+            $this->connection->commit();
             return $rows;
         }catch(Exception $e){
+            $this->connection->rollback();
             throw $e;
         }
     }

@@ -8,19 +8,18 @@
  * @param array|null $params Optional parameters to pass to the method.
  * @return mixed The result of the method call.
  */
-function LoadDetails(CustomerController $Controller,$object,$method,$params=null){
-    return $Controller->$object($method,$params);
+function ExecuteObject(ICustomer $Interface,$object,$method,$params=null){
+    return $Interface->$object($method,$params);
 }
 
 try{
-    $customer = new CustomerController();
     $cart = array(
         0 => array(
             'CartCount' => 0
         )
     );
-    $CartCount = (isset($_COOKIE['customerid'])) ? $customer->Cart('countCart',$_COOKIE['customerid']) : $cart;
-    
+    $CartCount = (isset($_COOKIE['customerid'])) ? ExecuteObject(new CustomerController(),'Cart','countCart',$_COOKIE['customerid']) : $cart;
+    $count = $CartCount[0]['CartCount'];
 }catch(Exception $e){
     throw $e;
 }
@@ -53,7 +52,7 @@ try{
             </a>
             <a href="cart" class="btn px-0 ml-3">
                 <i class="fas fa-shopping-cart text-primary"></i>
-                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;"><?php echo $CartCount[0]['CartCount']?></span>
+                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;"><?php echo $count?></span>
             </a>
         </div>
     </div>

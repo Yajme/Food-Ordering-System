@@ -17,64 +17,52 @@ if(isset($_POST['submit'])){
     $data = array(
         'customerid' => $Customerid,
         'payment' => $_POST['payment'],
-        'address' =>$Controller->User('getAddress',$Customerid),
+        'address' =>$_SESSION['address'],
         'cart'=>$Controller->Cart('viewCart',$Customerid),
         'total'=> $_SESSION['total']
     );
-    $Controller->User('checkout',$data);
+    //$Controller->User('checkout',$data);
     
+    ExecuteObject(new CustomerController(),'User','checkout',$data);
     $_SESSION['message'] = "Order Placed Successfully";
-     echo "<script>window.location.href='index';</script>";
+    echo "<script>window.location.href='order';</script>";
+    unset($_SESSION['address']);
 }
-/**
- * This script handles the checkout process for a user.
- * It checks if the user is logged in, retrieves the user's address and cart details,
- * and displays the available payment methods.
- */
 
-if(isset($_GET)){
-    $Data = LoadDetails(new CustomerController(),'User','getAddress',$_COOKIE['customerid']);
-    var_dump($Data);
-    $Controller = new CustomerController();
-    $count = $Controller->Cart('countCart',$_COOKIE['customerid']);
-    
-    if($count[0]['CartCount']>0){
-        $data = loadOrderDetails();
-        $address = $data['address'];
-        $payment = $data['payment'];
-        $cart = $data['cart'];
-    }else{
-        echo "<script>window.location.href='index';</script>";
-        exit();
+if(isset($_POST['setAddress'])){
+    if(!isset($_POST['address'])) throw new Exception("Please select an address");
+    $address = ExecuteObject(new CustomerController(),'User','selectAddress',$_POST['address']);
+    $_SESSION['address'] = $address[0];
+    echo "<script>window.location.href='checkout';</script>";
+}
+    /**
+     * This script handles the checkout process for a user.
+     * It checks if the user is logged in, retrieves the user's address and cart details,
+     * and displays the available payment methods.
+     */
+    if(isset($_GET)){
+        //Check if the user has items in their cart
+        if($count>0){
+            //Load the user's address and cart details
+            $address = ExecuteObject(new CustomerController(),'User','getAddress',$_COOKIE['customerid']);
+            //Load the user's payment methods
+            $payment = ExecuteObject(new CustomerController(),'User','viewPaymentMethod');
+            //Load the user's cart details
+            $cart = ExecuteObject(new CustomerController(),'Cart','viewCart',$_COOKIE['customerid']);
+            
+            $primaryAddress = ExecuteObject(new CustomerController(),'User','selectPrimaryAddress',$_COOKIE['customerid']);
+            $_SESSION['address'] = (!isset($_SESSION['address'])) ?$primaryAddress[0] : $_SESSION['address'];
+            
+        }else{
+            echo "<script>window.location.href='index';</script>";
+            exit();
+        }
     }
-    
-    
-
-}
 }catch(Exception $e){
-        $_SESSION['errorMessage'] = $e->getMessage();
+    $_SESSION['errorMessage'] = $e->getMessage();
 }
 
- function loadOrderDetails(){
-    
-    if(!isset($_COOKIE['customerid'])){
-        $_SESSION['message'] = "Please login to continue";
-        header('location: index.php');
-    }
-    $Controller = new CustomerController();
-    $Customerid = $_COOKIE['customerid'];
-    $address = $Controller->User('getAddress',$Customerid);
-    $cart = $Controller->Cart('viewCart',$Customerid);
-    $payment = $Controller->User('viewPaymentMethod');
-    if(!$cart) header('location: index');  
-    $data = array(
-        'customerid' => $Customerid,
-        'address' =>$Controller->User('getAddress',$Customerid),
-        'cart'=>$cart,
-        'payment' => $Controller->User('viewPaymentMethod')
-    );
-    return $data;
-}
+
 ?>
 
     <!-- Breadcrumb Start -->
@@ -111,51 +99,53 @@ if(isset($_GET)){
         <div class="row px-xl-5">
             <div class="col-md-12 col-lg-8 col-xxl-7">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Shipping Address</span></h5>
-                <a href="address" >
+                <a href="#select"  data-toggle="modal" style="color:#2d3436;">
                     <div class="bg-light p-30 mb-5">
                         <div class="row">
-                            <div class="col-md-6">
-                                Hello
+                            <div class="col-lg-5-md-6 ">
+                                 <?php 
+                                 $addressDetails = $_SESSION['address'];
+                                 echo $addressDetails['firstname'] . ' ' . $addressDetails['lastname'];
+                                 ?>
                             </div>
+                            <div class="col-md-6 ">
+                                 <?php echo $addressDetails['phone'];?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                            <?php 
+                            $completeAddress = $addressDetails['street_number']. ', '. $addressDetails['building_no']. ', '. $addressDetails['barangay']. ', '.$addressDetails['municipality']. ', '. $addressDetails['postal_code'];
+                            echo $completeAddress;
+                            ?>
+                            </div> 
+                            
                         </div>
                     </div>    
                 </a>
+                <?php include './checkout_modal.php';?>
             </div>
             <div class="col-lg-8">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Items</span></h5>
                 <div class="bg-light p-30 mb-5">
                     <div class="container">
+                        <?php $total = 0; foreach($cart as $item):?>
                         <div class="row">
                             <div class="w-100"></div>
-                            <div class="col-md-2 col-lg-2"><img src="" class="img-thumbnail" alt="..."></div>
-                            <div class="col">hi</div>
-                            <div class="col">Musta</div>
-                            <div class="col-md-2">eto okay lang</div>
+                            <div class="col-md-2 col-lg-2"><img src="<?php echo $item['image_path'] ?>" class="img-thumbnail" alt="image"> </div>
+                            <div class="col"><?php echo $item['product_name']  ?></div>
+                            <div class="col"><?php echo '₱'.$item['cart_total'] ?></div>
+                            <div class="col-md-2">Quantity: <?php echo $item['quantity']?></div>
                         </div>
+                        <?php $total += $item['cart_total'] ?>
+                        <?php endforeach;?>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Order Total</span></h5>
                 <div class="bg-light p-30 mb-5">
-                    <div class="border-bottom">
-                        <h6 class="mb-3">Products</h6>
-                        <!-- Product List --> 
-                        <?php if($cart){ ?>
-                        <?php $total = 0; foreach($cart as $item):?>
-                        <div class="d-flex justify-content-between">
-                            <p><?php echo $item['product_name'] ?></p>
-                            <p><?php echo '₱'.$item['cart_total'] ?></p>
-                        </div>
-                        <?php $total += $item['cart_total'] ?>
-                        <?php endforeach;?>
-                        <?php }else {?>
-                        <!-- Product List -->
-                        <div class="d-flex justify-content-between">
-                            <p>No Items in Cart</p>
-                        </div>
-                        <?php } ?>
-                    </div>
+                    
                     <div class="border-bottom pt-3 pb-2">
                         <div class="d-flex justify-content-between mb-3">
                             <h6>Subtotal</h6>

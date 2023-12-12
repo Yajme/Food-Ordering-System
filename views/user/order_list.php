@@ -28,9 +28,11 @@
                
                 <?php 
                 if(isset($_GET['show']) && isset($_GET['preparing'])){
-                    $controller->Order('preparingOrders',array($data,$_GET['show']) );
+                    ExecuteObject(new CustomerController(),'Order','preparingOrders',array($data,$_GET['show']));
+                    //$controller->Order('preparingOrders',array($data,$_GET['show']) );
                 }else{
-                    $controller->Order('preparingOrders',$data); 
+                    //$controller->Order('preparingOrders',$data); 
+                    ExecuteObject(new CustomerController(),'Order','preparingOrders',$data);
                 }
                
                 ?>
@@ -52,9 +54,11 @@
                 </div>
                 <?php
                 if(isset($_GET['show']) && isset($_GET['shipping'])){
-                    $controller->Order('shippingOrders',array($data,$_GET['show']));
+                    //$controller->Order('shippingOrders',array($data,$_GET['show']));
+                    ExecuteObject(new CustomerController(),'Order','shippingOrders',array($data,$_GET['show']));
                 }else{
-                    $controller->Order('shippingOrders',$data);
+                    //$controller->Order('shippingOrders',$data);
+                    ExecuteObject(new CustomerController(),'Order','shippingOrders',$data);
                 }
                  
                 ?>
@@ -75,9 +79,11 @@
                 </div>
                 <?php 
                 if(isset($_GET['show']) && isset($_GET['delivered'])){
-                     $controller->Order('deliveredOrders',array($data,$_GET['show'])); 
+                     //$controller->Order('deliveredOrders',array($data,$_GET['show'])); 
+                     ExecuteObject(new CustomerController(),'Order','deliveredOrders',array($data,$_GET['show']));
                 }else{
-                    $controller->Order('deliveredOrders',$data); 
+                    //$controller->Order('deliveredOrders',$data); 
+                    ExecuteObject(new CustomerController(),'Order','deliveredOrders',$data);
                 }
                 ?>
             </div>
@@ -95,9 +101,12 @@
                 </div>
                 <?php 
                 if(isset($_GET['show']) && isset($_GET['received'])){
-                    $controller->Order('receivedOrders',array($data,$_GET['show'])); 
+
+                    //$controller->Order('receivedOrders',array($data,$_GET['show'])); 
+                    ExecuteObject(new CustomerController(),'Order','receivedOrders',array($data,$_GET['show']));
                 }else{
-                    $controller->Order('receivedOrders',$data);
+                    //$controller->Order('receivedOrders',$data);
+                    ExecuteObject(new CustomerController(),'Order','receivedOrders',$data);
                 }
                  ?>
             </div>

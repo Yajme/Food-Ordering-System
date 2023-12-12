@@ -10,7 +10,11 @@
             <div class="modal-body">
 			<div class="container-fluid text-center">
 				<h5>Are sure you want to delete</h5>
-				<h2>Name: <b></b></h2> 
+				<?php 
+				$AddressText = $key['street_number'] . ', ' . $key['building_no'] . ', ' . $key['barangay'] . ', ' . $key['municipality'] . ', ' . $key['postal_code'];
+				?>
+				
+				<h2> <?php echo $AddressText ?> ?</h2> 
             </div> 
 			</div>
             <div class="modal-footer">
@@ -35,34 +39,41 @@
 			<div class="container-fluid">
 			<form method="POST" action="edit.php?id=">
 				<div class="row">
-					<div class="col-lg-2">
-						<label style="position:relative; top:7px;">Firstname:</label>
-					</div>
-					<div class="col-lg-10">
-						<input type="text" name="firstname" class="form-control" value="">
-					</div>
+                        <div class="col-md-6">
+                            <div class="control-group">
+                            <label for="firstname">Street Number</label>
+                                <input type="text" class="form-control" name="street_number" placeholder="Street Number" required="required" value="<?php echo $key['street_number']; ?>"/>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="control-group">
+                                <label for="lastname">Building Number</label>
+                                <input type="text" class="form-control" name="building_no" placeholder="Building Number" required="required" value="<?php echo $key['building_no']; ?>"/>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="control-group">
+                                <label for="lastname">Barangay</label>
+                                <input type="text" class="form-control" name="barangay" placeholder="Barangay" required="required" value="<?php echo $key['barangay']; ?>"/>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="control-group">
+                                <label for="lastname">Municipality</label>
+                                <input type="text" class="form-control" name="Municipality" placeholder="Municipality" required="required" value="<?php echo $key['municipality']; ?>"/>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="control-group">
+                                <label for="lastname">Postal Code</label>
+                                <input type="text" class="form-control" name="postal_code" placeholder="Postal Code" required="required" value="<?php echo $key['postal_code']; ?>"/>
+                            </div>
+                        </div>
 				</div>
-				<div style="height:10px;"></div>
-				<div class="row">
-					<div class="col-lg-2">
-						<label style="position:relative; top:7px;">Lastname:</label>
-					</div>
-					<div class="col-lg-10">
-						<input type="text" name="lastname" class="form-control" value="">
-					</div>
-				</div>
-				<div style="height:10px;"></div>
-				<div class="row">
-					<div class="col-lg-2">
-						<label style="position:relative; top:7px;">Address:</label>
-					</div>
-					<div class="col-lg-10">
-						<input type="text" name="address" class="form-control" value="">
-					</div>
-				</div>
+				<!---->
             </div> 
 			</div>
-            <div class="modal-footer">
+            <div class="modal-footer">	
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 <button type="submit" name="edit" class="btn btn-warning">Save</button>
             </div>

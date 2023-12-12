@@ -97,9 +97,9 @@ class ProductModel extends Database {
      * @return array An array of products within the price range. Each product is represented as an associative array.
      * @throws Exception If no products are found.
      */
-    public function selectProductByPrice($min,$max){
-        $min = $this->escape_string($min);
-        $max = $this->escape_string($max);
+    public function selectProductByPrice($params=array()){
+        $min = $this->escape_string($params['min']);    
+        $max = $this->escape_string($params['max']);
         $query = "SELECT * FROM view_availableproducts WHERE price BETWEEN $min AND $max";
         $rows = $this->read($query);
         return ($rows) ? $rows : throw new Exception("No products found");

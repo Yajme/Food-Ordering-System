@@ -5,7 +5,7 @@
  */
 try{
     $customer = new CustomerController();
-    $categories = $customer->Products('loadCategories');
+    $categories = ExecuteObject(new CustomerController(),'Products','loadCategories');
     /**
      * This code block checks the query parameters and retrieves the appropriate products based on the conditions.
      * If the 'product' parameter is not set, it checks for 'category' and 'price' parameters to filter the products accordingly.
@@ -22,7 +22,8 @@ try{
              * @param string $category The selected category.
              * @return array The array of products.
              */
-            $products = $customer->Products('selectProductByCategory', $_GET['category']);
+            //$products = $customer->Products('selectProductByCategory', $_GET['category']);
+            $products = ExecuteObject(new CustomerController(),'Products','selectProductByCategory', $_GET['category']);
         }else if(isset($_GET['price'])){
             /**
              * Filters the products by price range.
@@ -31,8 +32,9 @@ try{
              * @param int $max The maximum price.
              * @return array The filtered products.
              */
-            $products = $customer->filterbyPrice($_GET['min'], $_GET['max']);
-
+            //$products = $customer->filterbyPrice($_GET['min'], $_GET['max']);
+            $price_range = array('min'=>$_GET['min'],'max'=>$_GET['max']);
+            $products = ExecuteObject(new CustomerController(),'Products','selectProductByPrice', $price_range);
         }else{
             if(!isset($_SESSION['error']) ){
                 /**
@@ -41,7 +43,7 @@ try{
                  * @param string $customer The customer object.
                  * @return array The array of selected products.
                  */
-                $products = $customer->Products('selectAllProducts');
+                $products = ExecuteObject(new CustomerController(),'Products','selectAllProducts');
             }
         }
     }else{
@@ -50,9 +52,8 @@ try{
          *
          * @param string $searchQuery The search query for filtering products.
          * @return array An array of products matching the search query.
-         */
-        $products = $customer->Products('selectProductBySearch', $_GET['product']);
-        $products = $customer->Products('selectProductBySearch',$_GET['product']);
+         */ 
+        $products = ExecuteObject(new CustomerController(),'Products','selectProductBySearch',$_GET['product']);
     }
 }catch(Exception $e){
     $_SESSION['error'] = $e->getMessage();
