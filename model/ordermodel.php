@@ -36,7 +36,7 @@ class UserOrderModel extends OrderModel{
             $customerid = $this->escape_string($params);
             $query = "SELECT * FROM `view_customer_order` WHERE `customer_id` = '$customerid' ORDER BY created_at DESC";
             $rows = $this->read($query);
-            if(!$rows) throw new Exception("Unable to get orders");
+            if(!$rows) throw new Exception("No Order Found");
             return $rows;
         }catch(Exception $e){
             throw $e;
@@ -67,19 +67,6 @@ class UserOrderModel extends OrderModel{
             
         }catch(Exception $e){
             $this->connection->rollback();
-            throw $e;
-        }
-    }
-    public function updateOrderDetail($params){
-        try{
-            $customerid = $this->escape_string($params['customerid']);
-            $orderid = $this->escape_string($params['orderid']);
-            $query = "SELECT * FROM `view_customer_order` WHERE `customer_id` = '$customerid' AND `order_id` = '$orderid'";
-            $rows = $this->execute($query);
-            if(!$rows) throw new Exception("Unable to get orders");
-            return $rows;
-            
-        }catch(Exception $e){
             throw $e;
         }
     }

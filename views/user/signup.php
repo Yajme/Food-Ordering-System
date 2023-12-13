@@ -3,7 +3,16 @@
 include_once '../../utils/location.php';
 
 //https://psgc.gitlab.io/api/provinces/041000000/municipalities.json 
-
+function ExecuteSignup(ISignup $signup,$params){
+    try{
+        return $signup->Signup($params);
+    }catch(Exception $e){
+        throw $e;
+    }
+}
+function ExecuteLogin(ILogin $Interface,$params=null){
+    return $Interface->Login($params[0],$params[1]);
+}
 if(isset($_POST['signup'])){
     /**
      * This code block handles the signup process for a user.
@@ -49,9 +58,9 @@ if(isset($_POST['signup'])){
         if($data['basePassword'] != $data['comparePassword']){
             throw new Exception('Password does not match');
         }
-        $Controller = new CustomerController();
-        $Controller->Signup($data);
-        $Controller->Login($data['username'],$data['basePassword']);
+
+        ExecuteSignup(new CustomerController(),$data);
+        ExecuteLogin(new CustomerController(),array($data['username'],$data['basePassword']));
         header('location: index.php');
     }catch(Exception $e){
         $_SESSION['errorMessage'] = $e->getMessage();

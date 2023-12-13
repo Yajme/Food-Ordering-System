@@ -6,17 +6,17 @@ include_once '../partials/shop-header.php';
         try{
             $username = $_POST["username"];
             $password = $_POST['password'];
-
-            $Controller = new CustomerController();
-            $Controller->Login($username,$password);
-
+            
+            ExecuteLogin(new CustomerController(),array($username,$password));
         }catch(Exception $e){
             $_SESSION['errorMessage'] = $e -> getMessage();
         }
-       
+        
     }
 
-
+function ExecuteLogin(ILogin $Interface,$params=null){
+    return $Interface->Login($params[0],$params[1]);
+}
 ?>
     <!-- Login Start -->
     <div class="container-fluid">

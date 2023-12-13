@@ -6,14 +6,14 @@ try{
     if(!isset($_POST['product_id'])){
         //$customer->Cart('deleteCart',$_POST['delete']);
         
-        $Cart = (isset($_COOKIE['customerid'])) ? $customer->Cart('viewCart',$_COOKIE['customerid']) : NULL;
+        $Cart = (isset($_COOKIE['customerid'])) ? ExecuteObject(new CustomerController(),'Cart','viewCart',$_COOKIE['customerid']) : NULL;
     }else{
         $data = array(
             'productid' => $_POST['product_id'],
             'customerid' => $_COOKIE['customerid']
         );
-        $deletCart = $customer->Cart('deleteCart',$data);
-        $Cart = $customer->Cart('viewCart',$_COOKIE['customerid']);
+        ExecuteObject(new CustomerController(),'Cart','deleteCart',$data);
+        $Cart = ExecuteObject(new CustomerController(),'Cart','viewCart',$_COOKIE['customerid']);
         
     }
 }catch(Exception $e){

@@ -68,8 +68,20 @@ class UserModel extends Database{
             throw $e;
         }
     }
+    
     /**
-     * Registers a new address for the customer.
+     * Registers a new address for a customer.
+     *
+     * @param array $data The data containing the address information.
+     *                    The array should have the following keys:
+     *                    - customerid: The ID of the customer.
+     *                    - buildingNumber: The building number of the address.
+     *                    - streetNumber: The street number of the address.
+     *                    - barangay: An array containing the name of the barangay.
+     *                    - municipality: An array containing the name of the municipality.
+     *                    - postalCode: The postal code of the address.
+     * @return int The number of rows affected by the insert query.
+     * @throws Exception If there is an error registering the address.
      */
     public function registerAddress($data=array()){
         try{
@@ -93,110 +105,61 @@ class UserModel extends Database{
         }
         
     }
-    /**
-     * Adds a product to the customer's cart.
-     *
-     * @param array $params An array containing the product ID, customer ID, and quantity.
-     * @return mixed Returns the result of the database operation.
-     * @throws Exception If there is an error adding the product to the cart.
-     */
-    public function addToCart($params=array()){
-        
-        try{
-            $this->connection->autocommit(FALSE);
-            $productid = $this->escape_string($params[0]['productid']);
-            $customerid = $this->escape_string($params[0]['customerid']);
-            $quantity = $this->escape_string($params[0]['quantity']);
-            $query = "SELECT * FROM tbl_customer_cart WHERE product_id = $productid AND customer_id = $customerid";
-            $rows = $this->read($query);
-            if($rows){
-                $quantity = $rows[0]['quantity'] + $quantity;
-                $query = "UPDATE `tbl_customer_cart` SET `quantity`=$quantity, `modified_at`=now(), `deleted_at` =NULL WHERE product_id = $productid AND customer_id = $customerid";
-                $rows = $this->execute($query);
-                if(!$rows) throw new Exception("Unable to add to cart");
-                $this->connection->commit();
-                return $rows;
-            }
-            $query = "INSERT INTO `tbl_customer_cart`(`product_id`, `customer_id`,`quantity`) VALUES ($productid,$customerid,$quantity)";
-            $rows = $this->execute($query);
-            if(!$rows) throw new Exception("Unable to add to cart");
-            $this->connection->commit();
-        return $rows;
-        }catch(Exception $e){
-            $this->connection->rollback();
-            throw $e;
-        }
-        
-    }
 
     /**
-     * Retrieves the cart items for a specific customer.
+     * Retrieves the address of a customer based on the provided parameters.
      *
-     * @param int $customerid The ID of the customer.
-     * @return array The cart items for the customer.
-     * @throws Exception If the cart is empty.
+     * @param mixed $params The parameters used to retrieve the address.
+     * @return array The array of address records.
+     * @throws Exception If unable to retrieve the address.
      */
-    public function viewCart($customerid){
-        $customerid = $this->escape_string($customerid);
-        $query = "SELECT * FROM view_customer_cart WHERE customer_id = $customerid";
-        $rows = $this->read($query);
-        if(!$rows) throw new Exception("Cart is empty!");
-        return $rows;
-    }
-    /**
-     * Counts the number of items in the cart for a given customer.
-     *
-     * @param int $customerid The ID of the customer.
-     * @return array The result of the query, containing the count of items in the cart.
-     * @throws Exception If the cart is empty.
-     */
-    public function countCart($customerid){
-        $customerid = $this->escape_string($customerid);
-        $query = "SELECT count(*) as CartCount FROM view_customer_cart WHERE customer_id = $customerid";
-        $rows = $this->read($query);
-        if(!$rows) throw new Exception("Cart is empty!");
-        return $rows;
-    }
-
-    /**
-     * Deletes a product from the customer's cart.
-     *
-     * @param array $params The parameters for deleting the product from the cart.
-     *                      - productid: The ID of the product to be deleted.
-     *                      - customerid: The ID of the customer.
-     * @return int The number of rows affected by the deletion.
-     * @throws Exception If unable to delete the product from the cart.
-     */
-    public function deleteCart($params=array()){
-        try{
-            $this->connection->autocommit(FALSE);
-            $productid = $this->escape_string($params['productid']);
-            $customerid = $this->escape_string($params['customerid']);
-            $query = "UPDATE `tbl_customer_cart` SET deleted_at = now(), quantity = 0 WHERE product_id = $productid AND customer_id = $customerid";
-            $rows = $this->execute($query);
-            if(!$rows) throw new Exception("Unable to delete from cart");
-            $this->connection->commit();
-            return $rows;
-        }catch(Exception $e){
-            $this->connection->rollback();
-            throw $e;
-        }
-    }
-
     public function getAddress($params){
         try{
-
             $customerid = $this->escape_string($params);
-            $query = "SELECT * FROM view_customer_address WHERE customer_id ='$customerid'";
+            $query = "SELECT * FROM view_customer_address WHERE customer_id ='$customerid' ORDER BY `default` DESC";
             $rows = $this->read($query);
             if(!$rows) throw new Exception("Unable to get address");
             return $rows;
         }catch(Exception $e){
-            $this->connection->rollback();
             throw $e;
         }
     }
-
+    /**
+     * Selects the primary address for a given customer ID.
+     *
+     * @param mixed $params The customer ID.
+     * @return array The primary address details.
+     * @throws Exception If unable to retrieve the address.
+     */
+    public function selectPrimaryAddress($params){
+        try{
+            $customerid = $this->escape_string($params);
+            $query = "SELECT * FROM view_customer_address WHERE customer_id ='$customerid' AND `default` = 1";
+            $rows = $this->read($query);
+            if(!$rows) throw new Exception("Unable to get address");
+            return $rows;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    /**
+     * Selects an address from the database based on the given parameters.
+     *
+     * @param mixed $params The parameters used to select the address.
+     * @return array The selected address information.
+     * @throws Exception If unable to get the address.
+     */
+    public function selectAddress($params){
+        try{
+            $addressid = $this->escape_string($params);
+            $query = "SELECT * FROM view_customer_address WHERE ID ='$addressid'";
+            $rows = $this->read($query);
+            if(!$rows) throw new Exception("Unable to get address");
+            return $rows;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     /**
      * Retrieves all payment methods from the database.
      *
@@ -233,7 +196,7 @@ class UserModel extends Database{
             $paymentmethod = $this->escape_string($params['payment']);
             $total = floatval($params['total']);
             
-            $addressid = $this->escape_string($params['address'][0]['ID']);
+            $addressid = $this->escape_string($params['address']['ID']);
             /**
              * Checkout 
              * @param $customerid, @param $paymentmethod, @param $amount, @param $orderid OUT
@@ -272,29 +235,6 @@ class UserModel extends Database{
             return $rows;
         }catch(Exception $e){
             $this->connection->rollback();
-            throw $e;
-        }
-    }
-    public function completedOrder($params=array()){
-        try{
-            $customerid = $this->escape_string($params);
-            $query = "SELECT * FROM view_customer_completed_order WHERE customer_id = $customerid";
-            $rows = $this->execute($query);
-            if(!$rows) throw new Exception("Unable to get orders");
-            return $rows;
-        }catch(Exception $e){
-            $this->connection->rollback();
-            throw $e;
-        }
-    }
-    public function viewOrder($params){
-        try{
-            $customerid = $this->escape_string($params);
-            $query = "SELECT * FROM view_customer_order WHERE customer_id = $customerid";
-            $rows = $this->read($query);
-            if(!$rows) throw new Exception("Unable to get orders");
-            return $rows;
-        }catch(Exception $e){
             throw $e;
         }
     }

@@ -1,8 +1,8 @@
 <?php include_once '../partials/shop-header.php';
 try{
     
-    
-if(!isset($_SESSION['user_name'])) header('location: index.php');
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION['user_name'])) echo "<script>window.location.href='index';</script>";
 
 /**
  * Process the form submission for checkout.
@@ -17,68 +17,52 @@ if(isset($_POST['submit'])){
     $data = array(
         'customerid' => $Customerid,
         'payment' => $_POST['payment'],
-        'address' =>$Controller->Cart('getAddress',$Customerid),
+        'address' =>$_SESSION['address'],
         'cart'=>$Controller->Cart('viewCart',$Customerid),
         'total'=> $_SESSION['total']
     );
-    $Controller->Cart('checkout',$data);
+    //$Controller->User('checkout',$data);
     
+    ExecuteObject(new CustomerController(),'User','checkout',$data);
     $_SESSION['message'] = "Order Placed Successfully";
-     echo "<script>window.location.href='index';</script>";
+    echo "<script>window.location.href='order';</script>";
+    unset($_SESSION['address']);
 }
-/**
- * This script handles the checkout process for a user.
- * It checks if the user is logged in, retrieves the user's address and cart details,
- * and displays the available payment methods.
- */
 
-if(isset($_GET)){
-    
-    $Controller = new CustomerController();
-    $count = $Controller->Cart('countCart',$_COOKIE['customerid']);
-    
-    if($count[0]['CartCount']>0){
-        $data = loadOrderDetails();
-        $address = $data['address'];
-        $payment = $data['payment'];
-        $cart = $data['cart'];
-    }else{
-        header('location: index');
-        exit();
+if(isset($_POST['setAddress'])){
+    if(!isset($_POST['address'])) throw new Exception("Please select an address");
+    $address = ExecuteObject(new CustomerController(),'User','selectAddress',$_POST['address']);
+    $_SESSION['address'] = $address[0];
+    echo "<script>window.location.href='checkout';</script>";
+}
+    /**
+     * This script handles the checkout process for a user.
+     * It checks if the user is logged in, retrieves the user's address and cart details,
+     * and displays the available payment methods.
+     */
+    if(isset($_GET)){
+        //Check if the user has items in their cart
+        if($count>0){
+            //Load the user's address and cart details
+            $address = ExecuteObject(new CustomerController(),'User','getAddress',$_COOKIE['customerid']);
+            //Load the user's payment methods
+            $payment = ExecuteObject(new CustomerController(),'User','viewPaymentMethod');
+            //Load the user's cart details
+            $cart = ExecuteObject(new CustomerController(),'Cart','viewCart',$_COOKIE['customerid']);
+            
+            $primaryAddress = ExecuteObject(new CustomerController(),'User','selectPrimaryAddress',$_COOKIE['customerid']);
+            $_SESSION['address'] = (!isset($_SESSION['address'])) ?$primaryAddress[0] : $_SESSION['address'];
+            
+        }else{
+            echo "<script>window.location.href='index';</script>";
+            exit();
+        }
     }
-    
-    
-
-}
 }catch(Exception $e){
-    try{
-        $_SESSION['errorMessage'] = $e->getMessage();
-    }catch(Exception $e){
-        $_SESSION['errorMessage'] = $e->getMessage();
-    }
-    
+    $_SESSION['errorMessage'] = $e->getMessage();
 }
 
- function loadOrderDetails(){
-    
-    if(!isset($_COOKIE['customerid'])){
-        $_SESSION['message'] = "Please login to continue";
-        header('location: index.php');
-    }
-    $Controller = new CustomerController();
-    $Customerid = $_COOKIE['customerid'];
-    $address = $Controller->Cart('getAddress',$Customerid);
-    $cart = $Controller->Cart('viewCart',$Customerid);
-    $payment = $Controller->Cart('viewPaymentMethod');
-    if(!$cart) header('location: index');  
-    $data = array(
-        'customerid' => $Customerid,
-        'address' =>$Controller->Cart('getAddress',$Customerid),
-        'cart'=>$cart,
-        'payment' => $Controller->Cart('viewPaymentMethod')
-    );
-    return $data;
-}
+
 ?>
 
     <!-- Breadcrumb Start -->
@@ -111,77 +95,57 @@ if(isset($_GET)){
             unset($_SESSION['errorMessage']);?>
             </div>
         <?php }?>
+
         <div class="row px-xl-5">
+            <div class="col-md-12 col-lg-8 col-xxl-7">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Shipping Address</span></h5>
+                <a href="#select"  data-toggle="modal" style="color:#2d3436;">
+                    <div class="bg-light p-30 mb-5">
+                        <div class="row">
+                            <div class="col-lg-5-md-6 ">
+                                 <?php 
+                                 $addressDetails = $_SESSION['address'];
+                                 echo $addressDetails['firstname'] . ' ' . $addressDetails['lastname'];
+                                 ?>
+                            </div>
+                            <div class="col-md-6 ">
+                                 <?php echo $addressDetails['phone'];?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                            <?php 
+                            $completeAddress = $addressDetails['street_number']. ', '. $addressDetails['building_no']. ', '. $addressDetails['barangay']. ', '.$addressDetails['municipality']. ', '. $addressDetails['postal_code'];
+                            echo $completeAddress;
+                            ?>
+                            </div> 
+                            
+                        </div>
+                    </div>    
+                </a>
+                <?php include './checkout_modal.php';?>
+            </div>
             <div class="col-lg-8">
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Items</span></h5>
                 <div class="bg-light p-30 mb-5">
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>First Name</label>
-                            <input class="form-control" type="text" placeholder="First Name" value="<?php echo $address[0]['firstname'];?>" required>
+                    <div class="container">
+                        <?php $total = 0; foreach($cart as $item):?>
+                        <div class="row">
+                            <div class="w-100"></div>
+                            <div class="col-md-2 col-lg-2"><img src="<?php echo $item['image_path'] ?>" class="img-thumbnail" alt="image"> </div>
+                            <div class="col"><?php echo $item['product_name']  ?></div>
+                            <div class="col"><?php echo '₱'.$item['cart_total'] ?></div>
+                            <div class="col-md-2">Quantity: <?php echo $item['quantity']?></div>
                         </div>
-                        <div class="col-md-6 form-group">
-                            <label>Last Name</label>
-                            <input class="form-control" type="text" placeholder="Last Name" value="<?php echo $address[0]['lastname'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>E-mail</label>
-                            <input class="form-control" type="text" placeholder="Email" value="<?php echo $address[0]['email'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Mobile No</label>
-                            <input class="form-control" type="text" placeholder="Phone" value="<?php echo $address[0]['phone'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 1</label>
-                            <input class="form-control" type="text" placeholder="Street" value="<?php echo $address[0]['street_number'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 2 (Optional)</label>
-                            <input class="form-control" type="text" placeholder="Building/House Number" value="<?php echo $address[0]['building_no'];?>">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Barangay</label>
-                            <select class="custom-select" name="barangay" required>
-                                <option selected><?php echo $address[0]['barangay'];?></option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>City</label>
-                            <input class="form-control" type="text" placeholder="New York" value="<?php echo $address[0]['municipality'];?>" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Postal Code</label>
-                            <input class="form-control" type="text" placeholder="Postal Code" value="<?php echo $address[0]['postal_code'];?>" required>
-                        </div>
-                        <div class="col-md-12">
-                           
-                        </div>
+                        <?php $total += $item['cart_total'] ?>
+                        <?php endforeach;?>
                     </div>
                 </div>
-                
             </div>
             <div class="col-lg-4">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Order Total</span></h5>
                 <div class="bg-light p-30 mb-5">
-                    <div class="border-bottom">
-                        <h6 class="mb-3">Products</h6>
-                        <!-- Product List --> 
-                        <?php if($cart){ ?>
-                        <?php $total = 0; foreach($cart as $item):?>
-                        <div class="d-flex justify-content-between">
-                            <p><?php echo $item['product_name'] ?></p>
-                            <p><?php echo '₱'.$item['cart_total'] ?></p>
-                        </div>
-                        <?php $total += $item['cart_total'] ?>
-                        <?php endforeach;?>
-                        <?php }else {?>
-                        <!-- Product List -->
-                        <div class="d-flex justify-content-between">
-                            <p>No Items in Cart</p>
-                        </div>
-                        <?php } ?>
-                    </div>
+                    
                     <div class="border-bottom pt-3 pb-2">
                         <div class="d-flex justify-content-between mb-3">
                             <h6>Subtotal</h6>
@@ -220,9 +184,7 @@ if(isset($_GET)){
 
     </form>
     <!-- Checkout End -->
-            <script>
-        
-    
+<script>    
 </script>
             
 <?php include_once '../partials/shop-footer.php';?>

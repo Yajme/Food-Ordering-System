@@ -4,6 +4,7 @@ require_once '../../model/usermodel.php';
 require_once '../../utils/userinterface.php';
 require_once '../../utils/authentication.php';
 require_once '../../model/productmodel.php';
+require_once '../../model/cartmodel.php';
 require_once '../../class/order.php';
 interface ICustomer{
     
@@ -31,7 +32,7 @@ abstract class BaseCustomer implements ICustomer, ILogin{
     public function Cart($Function, $params = array())
     {
         try{
-            return  $this->initializeUserModel(new UserModel())->$Function($params);
+            return  $this->initializeCartModel(new Cart())->$Function($params);
         }catch(Exception $e){
             throw $e;
         }
@@ -47,16 +48,17 @@ abstract class BaseCustomer implements ICustomer, ILogin{
     public function Order($Function, $params = array())
     {
         try{
-            return  $this->initializeOrderModel()->$Function($params);
+            return  $this->initializeOrderModel(new UserOrderModel())->$Function($params);
         }catch(Exception $e){
             throw $e;
         }
     }
     private function initializeProductModel(ProductModel $product){return $product;}
     private function initializeUserModel(UserModel $user){return $user;}
-    private function initializeOrderModel(){return new UserOrder(new UserOrderModel());}
+    private function initializeCartModel(ICart $cart){return $cart;}
+    private function initializeOrderModel(IOrder $Order){return new UserOrder($Order);}
 }
-class CustomerController extends BaseCustomer {
+class CustomerController extends BaseCustomer implements ISignup {
     protected $user;
     protected $product;
     public function __construct()
@@ -90,59 +92,6 @@ class CustomerController extends BaseCustomer {
     public function Signup($data){
         try{
             $this->user->signupUser($data);
-        }catch(Exception $e){
-            throw $e;
-        }
-    }
-    /**
-     * List of Functions for loading categories and products
-     * 1. LoadCategories()
-     * 2. LoadFeaturedProducts()
-     * 3. recentProducts()
-     * 4. loadAvailableProducts()
-     * 5. filterbyCategory($categories)
-     * 6. filterbyPrice($min,$max)
-     * 7. selectProductBySearch($search)
-     */
-   
-    
-
-
-
-    public function loadAvailableProducts(){
-        try{
-            $product = new ProductModel();
-            $availableProducts = $product->selectAllProducts();
-            return $availableProducts;
-        }catch(Exception $e){
-            throw $e;
-        }
-    }
-
-    public function filterbyCategory($categories){
-        try{
-            $product = new ProductModel();
-            $availableProducts = $product->selectProductByCategory($categories);
-            return $availableProducts;
-        }catch(Exception $e){
-            throw $e;
-        }
-    }
-    public function filterbyPrice($min,$max){
-        try{
-            $product = new ProductModel();
-            $availableProducts = $product->selectProductByPrice($min,$max);
-            return $availableProducts;
-        }catch(Exception $e){
-            throw $e;
-        }
-    }
-
-    public function selectProductBySearch($search){
-        try{
-            $product = new ProductModel();
-            $availableProducts = $product->selectProductBySearch($search);
-            return $availableProducts;
         }catch(Exception $e){
             throw $e;
         }
