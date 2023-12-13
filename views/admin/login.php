@@ -1,18 +1,12 @@
 <?php
-    
-   // Check if the form is submitted
-   if (isset($_POST['login'])) {
-    try{
-        $username = $_POST["username"];
-        $password = $_POST['password'];
-
-        $orders = new adminProduct();
-        $orders->Login($username,$password);
-
-    }catch(Exception $e){
-        $_SESSION['errorMessage'] = $e -> getMessage();
-    }
-   
+  session_start();
+  include_once('../../model/adminmodel.php');
+  if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $orders = new adminProduct();
+    $orders->authenticateAdmin($username,$password);
+    if(!$orders->authenticateAdmin($username,$password)) $errorMessage = 'Invalid username or password';
 }
 
 ?>
@@ -41,13 +35,13 @@
                   <img src="../../public/assets/Untitled design1.png" width="180" alt="">
                 </a>
                 <p class="text-center">Log in as Administrator</p>
-                <form>
+                <form method="POST">
                   <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Username</label>
+                    <label class="form-label">Username</label>
                     <input type="text" class="form-control" name="username">
                   </div>
                   <div class="mb-4">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <label class="form-label">Password</label>
                     <input type="password" class="form-control" name="password">
                   </div>
                   <input type="submit" class="btn btn-primary" name="login" value="Login">

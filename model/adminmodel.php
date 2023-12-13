@@ -70,19 +70,48 @@ class adminProduct extends Database {
         }
     }
 
-    public function Login($username,$password){
-        try{
-            $query = "SELECT * FROM tbl_user WHERE username= '$username'";
-            $rows = $this->read($query);
+   function authenticateAdmin($username, $password) {
+    $query = 'SELECT username,password,salt FROM tbl_user WHERE username = ? AND role_id = 1';
+    $params = array($username);
 
-            $adminData = $rows;
-            if(!authentication::Authenticate($adminData[0]["password"],$adminData[0]["salt"],$password)) throw new Exception ('Incorrect password');
-            setCookie('userid',$adminData[0]["user_id"],time() + 3600, '/');
-            $_SESSION['user_name'] = $adminData[0]["userName"];
-           header('location: index.php');
-        }catch(Exception $e){
-            throw $e;
+    // Database connection
+    $stmt = mysqli_prepare($this->connection, $query);
+
+    if ($stmt) {
+        // Bind the parameters
+        mysqli_stmt_bind_param($stmt, 's', ...$params);
+        // Execute the query
+        mysqli_stmt_execute($stmt);
+        // Store the result
+        mysqli_stmt_store_result($stmt);
+        // Check if any rows are returned
+        if (mysqli_stmt_num_rows($stmt) > 0) {
+            // Bind the result variables
+            mysqli_stmt_bind_result($stmt, $dbUsername, $dbPassword, $dbSalt);
+            // Fetch the user details
+            mysqli_stmt_fetch($stmt);
+
+            if (authentication::Authenticate($dbPassword, $dbSalt, $password)) {
+                $_SESSION['username'] = $username;
+                setcookie('admin_username', $username, time() + (86400 * 2), "/"); // Set a cookie that expires in 2 days
+                header("location: index.php");
+                exit();
+            } else {
+                header("location: login.php");
+                exit();
+            }
+        } else {
+            // No matching user found
+            header("location: login.php");
+            exit();
         }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
+    } else {
+        // Handle statement preparation error
+        die('Error sa bind statement change params or query to debug');
+    }
     }
 }
 ?>
